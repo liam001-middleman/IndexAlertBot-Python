@@ -35,4 +35,5 @@ class Alert:
     detail: str  # 詳細說明（含數值）
     value: float
     threshold: float
+    price: float  # 該標的現價（報告用）
     triggered_at: datetime = field(default_factory=datetime.utcnow)

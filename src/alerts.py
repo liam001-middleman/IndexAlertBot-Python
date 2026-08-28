@@ -44,9 +44,10 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                 "value": quote.rsi,
                 "threshold": cfg.rsi_overbought,
                 "severity": "warning",
-                "message": f"{quote.name}（{quote.symbol}）RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超買",
+                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超買",
                 "detail": (
-                    f"{quote.name}（{quote.symbol}）RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
+                    f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
+                    f"RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
                     f"已達超買門檻 {_fmt(cfg.rsi_overbought)}"
                 ),
             }
@@ -59,9 +60,10 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                 "value": quote.rsi,
                 "threshold": cfg.rsi_oversold,
                 "severity": "warning",
-                "message": f"{quote.name}（{quote.symbol}）RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超賣",
+                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超賣",
                 "detail": (
-                    f"{quote.name}（{quote.symbol}）RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
+                    f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
+                    f"RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
                     f"已達超賣門檻 {_fmt(cfg.rsi_oversold)}"
                 ),
             }
@@ -162,6 +164,7 @@ def get_new_alerts(
                             detail=cond["detail"],
                             value=float(cond["value"]),
                             threshold=float(cond["threshold"]),
+                            price=quote.price,
                             triggered_at=now,
                         )
                     )

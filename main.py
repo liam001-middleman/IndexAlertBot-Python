@@ -123,9 +123,9 @@ def main() -> int:
             report = build_fallback_report(new_alerts)
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-        message = f"📊 行情警報 · {now_str}\n\n{report}"
+        message = f"行情警報 {now_str}\n\n{report}"
         if fetch_errors:
-            message += "\n\n⚠️ 本次部分標的抓取失敗：" + "；".join(fetch_errors)
+            message += "\n\n本次部分標的抓取失敗：" + "；".join(fetch_errors)
 
         # 4. Telegram 發送
         if args.dry_run:

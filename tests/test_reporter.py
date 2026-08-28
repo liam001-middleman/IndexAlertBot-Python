@@ -18,6 +18,7 @@ def make_alert(severity="warning", alert_name="RSI 超買", detail="測試詳細
         detail=detail,
         value=75.0,
         threshold=70.0,
+        price=314.58,
         triggered_at=datetime.now(timezone.utc),
     )
 
@@ -28,14 +29,17 @@ def test_build_user_prompt_contains_alert_info():
     assert "AAPL" in prompt
     assert "RSI 超買" in prompt
     assert "測試詳細內容" in prompt
+    assert "314.58" in prompt  # 現價
 
 
 def test_build_fallback_report():
-    report = build_fallback_report([make_alert(severity="critical")])
-    assert "測試詳細內容" in report
-    assert "🔴" in report
+    detail = "蘋果（AAPL）現價 314.58，RSI(14) 為 75.00，已達超買門檻 70.00"
+    report = build_fallback_report([make_alert(severity="critical", detail=detail)])
+    assert detail in report
+    assert "現價 314.58" in report
     assert "僅供參考" in report
     assert "不構成投資建議" in report
+    assert "🔴" not in report  # 不使用 emoji 符號
 
 
 def test_split_message_long_text():
