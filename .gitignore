@@ -16,4 +16,4 @@ venv/
 .DS_Store
 Thumbs.db
 
-# 注意：alert_state.json 刻意不忽略，需 commit 回 repo
+# 注意：alert_state_*.json 刻意不忽略，需 commit 回 repo

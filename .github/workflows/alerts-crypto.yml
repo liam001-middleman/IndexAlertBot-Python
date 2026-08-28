@@ -1,24 +1,22 @@
-name: Run Index Alerts
+name: Alerts - Crypto
 
 on:
   schedule:
-    # 每小時整點執行（GitHub Actions 使用 UTC 時間）
-    - cron: '0 * * * *'
+    # 加密貨幣 24 小時，每 5 分鐘（UTC）
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
-# 需要寫入權限才能把 alert_state.json commit 回 repo
 permissions:
   contents: write
 
-# 避免上一回合還沒結束、下一回合就啟動，造成狀態檔競態
 concurrency:
-  group: index-alert-bot
+  group: index-alert-bot-crypto
   cancel-in-progress: false
 
 jobs:
   run-alerts:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -35,34 +33,29 @@ jobs:
           pip install pytest
           python -m pytest tests -q
 
-      - name: Run alert bot
+      - name: Run alert bot (crypto)
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TZ: 'Asia/Taipei'
-        run: python main.py
+        run: python main.py --market crypto --state alert_state_crypto.json
 
-      # 即使 main.py 回傳非零，也嘗試把狀態檔 commit 回去
       - name: Commit alert state
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add alert_state.json
+          git add alert_state_crypto.json
           if git diff --cached --quiet; then
-            echo "::notice::alert_state.json 沒有變更，跳過 commit"
+            echo "::notice::alert_state 沒有變更，跳過 commit"
             exit 0
           fi
-
-          git commit -m "chore: update alert state $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-
-          # 先同步遠端最新再 push，避免與其他 push（如手動 commit）競爭被拒。
-          # 最多重試 5 次；rebase 衝突時 abort（本地 commit 會保留）後重試。
+          git commit -m "chore: update crypto alert state $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           for i in 1 2 3 4 5; do
             echo "同步遠端並推送（第 $i 次嘗試）..."
             if git pull --rebase origin master && git push origin master; then
-              echo "::notice::alert_state.json 已 commit 並推送"
+              echo "::notice::alert_state 已 commit 並推送"
               exit 0
             fi
             git rebase --abort 2>/dev/null || true
@@ -70,5 +63,5 @@ jobs:
               sleep 3
             fi
           done
-          echo "::error::多次嘗試後仍無法推送 alert_state.json，留待下個排程重試"
+          echo "::error::多次嘗試後仍無法推送 alert_state，留待下個排程重試"
           exit 1

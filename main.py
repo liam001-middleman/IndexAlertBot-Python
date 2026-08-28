@@ -68,12 +68,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="IndexAlertBot 定期行情警報")
     parser.add_argument("--config", default=str(ROOT_DIR / "config.yaml"), help="設定檔路徑")
     parser.add_argument("--state", default=str(ROOT_DIR / "alert_state.json"), help="狀態檔路徑")
+    parser.add_argument("--market", default="",
+                        help="只處理指定市場（逗號分隔：us,tw,crypto），留空 = 全部")
     parser.add_argument("--dry-run", action="store_true", help="預覽：不發送通知、不更新狀態")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    if not cfg.assets:
-        logger.error("config.yaml 沒有設定任何 assets")
+    assets = cfg.filter_assets(args.market)
+    if not assets:
+        logger.error("沒有符合市場篩選的 assets（--market=%s）", args.market or "全部")
         return 1
 
     state = StateStore(None if args.dry_run else args.state)
@@ -82,7 +85,7 @@ def main() -> int:
     # 1. 抓取 + 計算
     quotes = []
     fetch_errors = []
-    for asset in cfg.assets:
+    for asset in assets:
         try:
             md = get_market_data(
                 asset.symbol, cfg.history_period, cfg.history_interval, asset.provider

@@ -69,6 +69,13 @@ class Config:
         """取得某市場的有效警報設定（預設值 + 市場覆寫）。"""
         return self.alerts_defaults.merged(self.alerts_overrides.get(market))
 
+    def filter_assets(self, markets: str) -> list:
+        """依市場篩選 assets。markets 為逗號分隔（如 us,tw,crypto），留空回傳全部。"""
+        wanted = {m.strip().lower() for m in (markets or "").split(",") if m.strip()}
+        if not wanted:
+            return self.assets
+        return [a for a in self.assets if a.market in wanted]
+
 
 def load_config(path: Optional[str] = None) -> Config:
     """從 YAML 檔案 + 環境變數載入設定。"""
