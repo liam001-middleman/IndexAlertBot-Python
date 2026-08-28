@@ -1,1 +1,64 @@
-{}
+{
+  "AAPL": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 12.458044945325266,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "TSLA": {
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 5.156874465831376,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    },
+    "ma_deviation_neg_200": {
+      "status": "active",
+      "last_value": -11.037823900763724,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "NVDA": {
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 9.288996188247886,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 16.39800213449358,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "KLAC": {
+    "ma_deviation_neg_20": {
+      "status": "active",
+      "last_value": -5.748145538387231,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    },
+    "ma_deviation_neg_60": {
+      "status": "active",
+      "last_value": -16.01746233554862,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 6.800614355285065,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "MU": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 56.9991861261994,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "ORCL": {
+    "ma_deviation_neg_200": {
+      "status": "active",
+      "last_value": -10.08833796586736,
+      "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  }
+}
