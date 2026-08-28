@@ -1,1 +1,79 @@
-{}
+{
+  "AAPL": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 11.59369401185392,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  },
+  "TSLA": {
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 5.302990118477816,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_neg_200": {
+      "status": "active",
+      "last_value": -11.60924371844997,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  },
+  "2330.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 21.998337136469022,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  },
+  "2317.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 9.851305613849233,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  },
+  "BTC-USD": {
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 78.41906007031976,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 12.865017253740666,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 20.47542736904002,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 14.778078306421715,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  },
+  "ETH-USD": {
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 75.09663857981724,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 14.921029438787068,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 27.729256030703652,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 23.269128901765907,
+      "triggered_at": "2026-08-28T08:57:41.133151+00:00"
+    }
+  }
+}
