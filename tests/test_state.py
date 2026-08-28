@@ -32,6 +32,29 @@ def test_missing_file_loads_empty(tmp_path):
     assert store.data == {}
 
 
+def test_load_tolerates_bom(tmp_path):
+    """檔頭帶 UTF-8 BOM（PowerShell/部分編輯器會寫入）時不應崩潰。"""
+    path = tmp_path / "alert_state.json"
+    body = b'{"AAPL": {"rsi_overbought": {"status": "active", "last_value": 75.5}}}'
+    path.write_bytes(b"\xef\xbb\xbf" + body)
+    store = StateStore(path)
+    store.load()
+    assert store.is_active("AAPL", "rsi_overbought")
+    assert store.get("AAPL", "rsi_overbought")["last_value"] == 75.5
+
+
+def test_load_corrupt_file_backs_up_and_resets(tmp_path):
+    """內容損毀時應備份壞檔並以空狀態繼續，而不是拋錯。"""
+    path = tmp_path / "alert_state.json"
+    path.write_text("{ broken json !!!", encoding="utf-8")
+    store = StateStore(path)
+    store.load()
+    assert store.data == {}
+    backups = list(tmp_path.glob("alert_state.json.bak-*"))
+    assert len(backups) == 1
+    assert backups[0].read_text(encoding="utf-8") == "{ broken json !!!"
+
+
 def test_in_memory_store_no_save_error():
     store = StateStore(None)
     store.load()

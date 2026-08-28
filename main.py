@@ -18,6 +18,15 @@ ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+# 強制使用 UTF-8 輸出，避免在非 UTF-8 主控台（如 Windows Big5/cp950）
+# 且 stdout 被 pipe 時，中文 / emoji 輸出拋出 UnicodeEncodeError。
+for _stream in (sys.stdout, sys.stderr):
+    if _stream is not None and hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8")
+        except (ValueError, OSError):
+            pass
+
 from src.alerts import get_new_alerts
 from src.config import load_config
 from src.fetcher import FetchError, get_market_data
