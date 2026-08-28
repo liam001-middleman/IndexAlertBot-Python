@@ -52,7 +52,23 @@ jobs:
           git add alert_state.json
           if git diff --cached --quiet; then
             echo "::notice::alert_state.json 沒有變更，跳過 commit"
-          else
-            git commit -m "chore: update alert state $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            git push
+            exit 0
           fi
+
+          git commit -m "chore: update alert state $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+          # 先同步遠端最新再 push，避免與其他 push（如手動 commit）競爭被拒。
+          # 最多重試 5 次；rebase 衝突時 abort（本地 commit 會保留）後重試。
+          for i in 1 2 3 4 5; do
+            echo "同步遠端並推送（第 $i 次嘗試）..."
+            if git pull --rebase origin master && git push origin master; then
+              echo "::notice::alert_state.json 已 commit 並推送"
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            if [ "$i" -lt 5 ]; then
+              sleep 3
+            fi
+          done
+          echo "::error::多次嘗試後仍無法推送 alert_state.json，留待下個排程重試"
+          exit 1
