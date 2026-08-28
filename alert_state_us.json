@@ -8,20 +8,25 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.156874465831376,
+      "status": "clear",
+      "last_value": 2.9310643411114023,
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_neg_200": {
       "status": "active",
       "last_value": -11.037823900763724,
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    },
+    "ma_deviation_neg_60": {
+      "status": "active",
+      "last_value": -5.050927137336772,
+      "triggered_at": "2026-08-28T23:11:08.408184+00:00"
     }
   },
   "NVDA": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 9.288996188247886,
+      "status": "clear",
+      "last_value": 4.452579930423224,
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_200": {
@@ -42,8 +47,8 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_200": {
-      "status": "active",
-      "last_value": 6.800614355285065,
+      "status": "clear",
+      "last_value": 3.4534266256793025,
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     }
   },
@@ -59,6 +64,13 @@
       "status": "active",
       "last_value": -10.08833796586736,
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
+    }
+  },
+  "SPCX": {
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 5.174356620123595,
+      "triggered_at": "2026-08-28T23:11:08.408184+00:00"
     }
   }
 }
