@@ -4,10 +4,11 @@
 # 機密（API Key / Token / Chat ID）請放在環境變數，不要寫在這裡
 # ============================================================
 
-# 追蹤標的：symbol 需為 Yahoo Finance 代號
-#   美股格式：AAPL、TSLA
-#   台股格式：2330.TW、2317.TW
-#   加密貨幣格式：BTC-USD、ETH-USD
+# 追蹤標的：
+#   provider: yahoo（預設）→ symbol 需為 Yahoo Finance 代號
+#     美股：AAPL、TSLA；台股：2330.TW、2317.TW；加密貨幣：BTC-USD、ETH-USD
+#   provider: max → symbol 為 MAX 交易所交易對（加密貨幣台幣報價，免金鑰）
+#     加密貨幣：btctwd、ethtwd、usdttwd
 assets:
   - symbol: "AAPL"
     name: "蘋果"
@@ -21,12 +22,14 @@ assets:
   - symbol: "2317.TW"
     name: "鴻海"
     market: "tw"
-  - symbol: "BTC-USD"
+  - symbol: "btctwd"
     name: "比特幣"
     market: "crypto"
-  - symbol: "ETH-USD"
+    provider: "max"
+  - symbol: "ethtwd"
     name: "以太幣"
     market: "crypto"
+    provider: "max"
 
 # 警報門檻：defaults 為所有市場的預設值
 # overrides 可依 market（us / tw / crypto）覆寫

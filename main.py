@@ -84,7 +84,9 @@ def main() -> int:
     fetch_errors = []
     for asset in cfg.assets:
         try:
-            md = get_market_data(asset.symbol, cfg.history_period, cfg.history_interval)
+            md = get_market_data(
+                asset.symbol, cfg.history_period, cfg.history_interval, asset.provider
+            )
             quote = build_quote(asset, md, cfg.alert_config_for(asset.market))
             quotes.append(quote)
             rsi_txt = f"{quote.rsi:.1f}" if quote.rsi is not None else "N/A"

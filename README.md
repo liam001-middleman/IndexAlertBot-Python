@@ -1,13 +1,15 @@
 # IndexAlertBot-Python
 
-定時（每小時）從 Yahoo Finance 抓取美股、台股、加密貨幣的行情，計算 RSI 與 MA20/60/200，
+定時（每小時）抓取美股、台股、加密貨幣的行情（Yahoo Finance + MAX 交易所台幣報價），計算 RSI 與 MA20/60/200，
 偵測「RSI 超買超賣」、「日內急漲急跌」、「乖離 MA」等警報；只對**新觸發**的警報通知，
 由 DeepSeek 整理成繁體中文報告，經 Telegram Bot 推送。排程由 GitHub Actions 執行，
 狀態檔 `alert_state.json` 會在每次執行後自動 commit 回 repo。
 
 ## 功能
 
-- 多市場標的：美股（AAPL）、台股（2330.TW）、加密貨幣（BTC-USD），全部走 yfinance
+- 多市場標的：美股（AAPL）、台股（2330.TW）、加密貨幣（btctwd / ethtwd）
+  - `provider: yahoo`（預設）走 Yahoo Finance，支援美股/台股/USD 計價加密貨幣
+  - `provider: max` 走 MAX 台灣交易所公開 API，支援**台幣報價**加密貨幣（免金鑰）
 - 技術指標：RSI(14)（Wilder 平滑法）、MA20 / MA60 / MA200、乖離率、日內漲跌幅
 - 警報規則（門檻可在 `config.yaml` 調整，亦可依市場別覆寫）：
   - RSI 超買（≥ 70）/ 超賣（≤ 30）
@@ -26,7 +28,7 @@
 ├── src/
 │   ├── models.py                      # Quote / Alert 資料類別
 │   ├── config.py                      # 讀取 config.yaml + 環境變數
-│   ├── fetcher.py                     # yfinance 抓取行情
+│   ├── fetcher.py                     # 行情抓取（yahoo 走 yfinance / max 走 MAX 交易所）
 │   ├── indicators.py                  # RSI / MA / 乖離率計算
 │   ├── alerts.py                      # 警報規則 + 新觸發比對
 │   ├── state.py                       # alert_state.json 讀寫
@@ -70,7 +72,7 @@ python main.py
 
 | 區塊 | 說明 |
 |---|---|
-| `assets` | 追蹤標的（symbol / name / market）。market 為 `us`、`tw` 或 `crypto` |
+| `assets` | 追蹤標的（symbol / name / market）。market 為 `us`、`tw` 或 `crypto`。`provider` 預設 `yahoo`；加密貨幣台幣報價設 `max`，symbol 用 MAX 交易對（如 `btctwd`） |
 | `alerts.defaults` | 所有市場共用的警報門檻 |
 | `alerts.overrides` | 依 market 覆寫門檻（例如 crypto 波動大，門檻放寬） |
 | `history` | yfinance 抓取期間（預設 2 年日線，供 RSI/MA 計算） |

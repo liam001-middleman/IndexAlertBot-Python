@@ -14,6 +14,7 @@ class AssetConfig:
     symbol: str
     name: str
     market: str  # us / tw / crypto
+    provider: str = "yahoo"  # yahoo（Yahoo Finance） / max（MAX 交易所台幣報價）
 
 
 @dataclass
@@ -81,6 +82,7 @@ def load_config(path: Optional[str] = None) -> Config:
             symbol=str(a["symbol"]),
             name=str(a.get("name", a["symbol"])),
             market=str(a.get("market", "us")),
+            provider=str(a.get("provider", "yahoo")),
         )
         for a in raw.get("assets", [])
     ]
