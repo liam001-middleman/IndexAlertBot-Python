@@ -1,1 +1,40 @@
-{}
+{
+  "2330.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 21.9983372866215,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    }
+  },
+  "2317.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 9.851305613849233,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    }
+  },
+  "2327.TW": {
+    "intraday_surge": {
+      "status": "active",
+      "last_value": 7.567567567567568,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    },
+    "ma_deviation_neg_60": {
+      "status": "active",
+      "last_value": -21.25214560523724,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 34.53591731100422,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    }
+  },
+  "6789.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 18.477763844959377,
+      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+    }
+  }
+}
