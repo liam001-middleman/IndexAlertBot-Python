@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 環境變數（機密）
+.env
+
+# 測試與工具快取
+.pytest_cache/
+.mypy_cache/
+
+# 作業系統
+.DS_Store
+Thumbs.db
+
+# 注意：alert_state.json 刻意不忽略，需 commit 回 repo

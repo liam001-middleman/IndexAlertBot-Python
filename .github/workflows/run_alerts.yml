@@ -1,0 +1,58 @@
+name: Run Index Alerts
+
+on:
+  schedule:
+    # 每小時整點執行（GitHub Actions 使用 UTC 時間）
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+# 需要寫入權限才能把 alert_state.json commit 回 repo
+permissions:
+  contents: write
+
+# 避免上一回合還沒結束、下一回合就啟動，造成狀態檔競態
+concurrency:
+  group: index-alert-bot
+  cancel-in-progress: false
+
+jobs:
+  run-alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: |
+          pip install pytest
+          python -m pytest tests -q
+
+      - name: Run alert bot
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TZ: 'Asia/Taipei'
+        run: python main.py
+
+      # 即使 main.py 回傳非零，也嘗試把狀態檔 commit 回去
+      - name: Commit alert state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add alert_state.json
+          if git diff --cached --quiet; then
+            echo "::notice::alert_state.json 沒有變更，跳過 commit"
+          else
+            git commit -m "chore: update alert state $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            git push
+          fi

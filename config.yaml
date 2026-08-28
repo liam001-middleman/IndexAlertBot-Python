@@ -1,0 +1,61 @@
+# ============================================================
+# IndexAlertBot 設定檔
+# 標的、警報門檻、歷史資料期間、DeepSeek / Telegram 設定
+# 機密（API Key / Token / Chat ID）請放在環境變數，不要寫在這裡
+# ============================================================
+
+# 追蹤標的：symbol 需為 Yahoo Finance 代號
+#   美股格式：AAPL、TSLA
+#   台股格式：2330.TW、2317.TW
+#   加密貨幣格式：BTC-USD、ETH-USD
+assets:
+  - symbol: "AAPL"
+    name: "蘋果"
+    market: "us"
+  - symbol: "TSLA"
+    name: "特斯拉"
+    market: "us"
+  - symbol: "2330.TW"
+    name: "台積電"
+    market: "tw"
+  - symbol: "2317.TW"
+    name: "鴻海"
+    market: "tw"
+  - symbol: "BTC-USD"
+    name: "比特幣"
+    market: "crypto"
+  - symbol: "ETH-USD"
+    name: "以太幣"
+    market: "crypto"
+
+# 警報門檻：defaults 為所有市場的預設值
+# overrides 可依 market（us / tw / crypto）覆寫
+alerts:
+  defaults:
+    rsi_period: 14
+    rsi_overbought: 70        # RSI >= 70 視為超買
+    rsi_oversold: 30          # RSI <= 30 視為超賣
+    intraday_change_pct: 5.0  # 日內對比前收漲跌幅門檻（%）
+    ma_deviation_pct: 5.0     # 乖離 MA 門檻（%）
+    ma_periods: [20, 60, 200] # 要計算與監控的均線週期
+  overrides:
+    crypto:
+      intraday_change_pct: 10.0  # 加密貨幣波動大，門檻放寬
+      ma_deviation_pct: 8.0
+    tw:
+      intraday_change_pct: 6.0
+
+# 抓取的歷史資料期間（供 RSI / MA 計算）
+history:
+  period: "2y"      # yfinance 支援的期間字串
+  interval: "1d"    # 日線
+
+# DeepSeek API（api_key 從環境變數 DEEPSEEK_API_KEY 讀取）
+deepseek:
+  base_url: "https://api.deepseek.com"
+  model: "deepseek-chat"
+
+# Telegram（token / chat_id 從環境變數讀取）
+# parse_mode 留空 = 純文字；若要富文字可設 "HTML"
+telegram:
+  parse_mode: ""
