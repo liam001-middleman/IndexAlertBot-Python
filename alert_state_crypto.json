@@ -108,9 +108,9 @@
   },
   "btctwd": {
     "rsi_oversold": {
-      "status": "clear",
-      "last_value": 48.09357756531328,
-      "triggered_at": "2026-08-28T13:21:37.702002+00:00"
+      "status": "active",
+      "last_value": 29.243652039684733,
+      "triggered_at": "2026-08-29T04:10:36.259753+00:00"
     }
   }
 }
