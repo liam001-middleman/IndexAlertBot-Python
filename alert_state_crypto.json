@@ -111,6 +111,18 @@
       "status": "clear",
       "last_value": 38.21980172628128,
       "triggered_at": "2026-08-29T04:10:36.259753+00:00"
+    },
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 75.42328889459982,
+      "triggered_at": "2026-08-29T18:50:22.708864+00:00"
+    }
+  },
+  "ethtwd": {
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 74.30035021577261,
+      "triggered_at": "2026-08-29T18:50:22.708864+00:00"
     }
   }
 }
