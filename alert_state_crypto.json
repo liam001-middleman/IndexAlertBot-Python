@@ -125,8 +125,8 @@
       "triggered_at": "2026-08-29T18:50:22.708864+00:00"
     },
     "rsi_oversold": {
-      "status": "active",
-      "last_value": 27.74124739890786,
+      "status": "clear",
+      "last_value": 32.270962090514644,
       "triggered_at": "2026-08-30T17:22:39.979420+00:00"
     }
   }
