@@ -1,13 +1,13 @@
 {
   "ethtwd": {
     "rsi_overbought": {
-      "status": "clear",
-      "last_value": 58.23181016116622,
-      "triggered_at": "2026-08-31T10:45:35.948880+00:00"
+      "status": "active",
+      "last_value": 82.07534779920061,
+      "triggered_at": "2026-08-31T10:55:34.703830+00:00"
     },
     "__last_report__": {
-      "price": 77877.8,
-      "at": "2026-08-31T10:45:39.560895+00:00"
+      "price": 78000.0,
+      "at": "2026-08-31T10:55:39.224806+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
@@ -17,13 +17,13 @@
   },
   "btctwd": {
     "rsi_overbought": {
-      "status": "clear",
-      "last_value": 54.936409211119084,
-      "triggered_at": "2026-08-31T09:25:35.574201+00:00"
+      "status": "active",
+      "last_value": 77.01942888653838,
+      "triggered_at": "2026-08-31T10:55:34.703830+00:00"
     },
     "__last_report__": {
-      "price": 2491989.7,
-      "at": "2026-08-31T10:05:41.848783+00:00"
+      "price": 2498657.7,
+      "at": "2026-08-31T10:55:39.224806+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
