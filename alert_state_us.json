@@ -76,8 +76,8 @@
   },
   "SPCX": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.472552401019778,
+      "status": "clear",
+      "last_value": 4.995260663214552,
       "triggered_at": "2026-08-31T14:40:36.369798+00:00"
     },
     "__last_report__": {
