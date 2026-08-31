@@ -18,8 +18,8 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -5.050927137336772,
+      "status": "clear",
+      "last_value": -4.9512733115747505,
       "triggered_at": "2026-08-28T23:11:08.408184+00:00"
     }
   },
@@ -68,8 +68,8 @@
   },
   "SPCX": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.174356620123595,
+      "status": "clear",
+      "last_value": 3.174461737864346,
       "triggered_at": "2026-08-28T23:11:08.408184+00:00"
     }
   }
