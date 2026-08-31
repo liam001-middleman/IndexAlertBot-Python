@@ -148,6 +148,7 @@ def get_new_alerts(
 
     for quote in quotes:
         cfg = cfg_resolver(quote.market)
+        last_report = state.get_last_report(quote.symbol) or {}
         for cond in evaluate_conditions(quote, cfg):
             key = cond["type"]
             if cond["triggered"]:
@@ -165,6 +166,10 @@ def get_new_alerts(
                             value=float(cond["value"]),
                             threshold=float(cond["threshold"]),
                             price=quote.price,
+                            ma=quote.ma,
+                            ma_deviation_pct=quote.ma_deviation_pct,
+                            last_report_price=last_report.get("price"),
+                            last_report_at=last_report.get("at"),
                             triggered_at=now,
                         )
                     )

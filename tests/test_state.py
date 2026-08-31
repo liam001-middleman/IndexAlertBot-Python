@@ -1,4 +1,6 @@
 """alert_state.json 讀寫與狀態轉換測試。"""
+from datetime import datetime, timezone
+
 from src.state import StateStore
 
 
@@ -61,3 +63,37 @@ def test_in_memory_store_no_save_error():
     store.mark_active("TSLA", "rsi_oversold", 20.0)
     assert store.is_active("TSLA", "rsi_oversold")
     store.save()  # path=None 時不應拋錯
+
+
+def test_last_report_roundtrip(tmp_path):
+    path = tmp_path / "alert_state.json"
+    store = StateStore(path)
+    store.load()
+    store.set_last_report(
+        "btctwd", 2479781.70, datetime(2026, 8, 30, 1, 33, tzinfo=timezone.utc)
+    )
+    store.save()
+
+    store2 = StateStore(path)
+    store2.load()
+    snap = store2.get_last_report("btctwd")
+    assert snap is not None
+    assert snap["price"] == 2479781.70
+    assert snap["at"].startswith("2026-08-30T01:33")
+
+
+def test_get_last_report_missing_returns_none():
+    store = StateStore(None)
+    store.load()
+    assert store.get_last_report("AAPL") is None
+
+
+def test_last_report_does_not_collide_with_alert_state(tmp_path):
+    """保留鍵 __last_report__ 不應干擾既有警報狀態。"""
+    store = StateStore(None)
+    store.load()
+    store.set_last_report("AAPL", 314.58)
+    store.mark_active("AAPL", "rsi_overbought", 75.5)
+    assert store.is_active("AAPL", "rsi_overbought")
+    assert store.get_last_report("AAPL")["price"] == 314.58
+    assert store.get("AAPL", "rsi_overbought")["last_value"] == 75.5

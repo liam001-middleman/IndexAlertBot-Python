@@ -11,7 +11,7 @@
 import argparse
 import logging
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent
@@ -145,7 +145,15 @@ def main() -> int:
                 logger.error("Telegram 發送失敗（狀態未更新，下回合重試）: %s", exc)
                 return 1
 
-    # 5. 儲存狀態（供 GitHub Actions commit 回 repo）
+        # 5. 記錄「上次出報告」快照（供下次報告顯示「上次報告價格」；
+        #    只在成功送出後更新，失敗重送時仍顯示上一次成功報告的價格）
+        if not args.dry_run:
+            report_time = datetime.now(timezone.utc)
+            for alert in new_alerts:
+                state.set_last_report(alert.symbol, alert.price, report_time)
+            logger.info("已更新 %d 個標的的上次報告價格快照", len(new_alerts))
+
+    # 6. 儲存狀態（供 GitHub Actions commit 回 repo）
     if not args.dry_run:
         state.save()
         logger.info("狀態已儲存至 %s", state.path)

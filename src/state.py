@@ -19,6 +19,8 @@ from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
+REPORT_KEY = "__last_report__"  # 保留鍵：記錄該標的「上次出報告時」的價格快照
+
 
 class StateStore:
     """警報狀態儲存。path 為 None 時只存在記憶體（供 dry-run 使用）。"""
@@ -68,6 +70,19 @@ class StateStore:
 
     def get(self, symbol: str, alert_type: str) -> dict:
         return self._data.get(symbol, {}).get(alert_type, {}) or {}
+
+    def get_last_report(self, symbol: str) -> Optional[dict]:
+        """回傳該標的「上次出報告時」的快照（{"price", "at"}），無則回傳 None。"""
+        entry = self._data.get(symbol, {}).get(REPORT_KEY)
+        return entry if isinstance(entry, dict) else None
+
+    def set_last_report(self, symbol: str, price: float,
+                        reported_at: Optional[datetime] = None) -> None:
+        """記錄該標的本次出報告時的價格快照，供下次報告顯示「上次報告價格」。"""
+        self._data.setdefault(symbol, {})[REPORT_KEY] = {
+            "price": float(price),
+            "at": (reported_at or datetime.now(timezone.utc)).isoformat(),
+        }
 
     def mark_active(self, symbol: str, alert_type: str, value: float,
                     triggered_at: Optional[datetime] = None) -> None:

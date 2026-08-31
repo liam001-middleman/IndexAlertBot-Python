@@ -92,3 +92,19 @@ def test_intraday_drop_trigger(tmp_path):
     alerts = get_new_alerts([quote], lambda m: cfg, state)
     types = {a.alert_type for a in alerts}
     assert "intraday_drop" in types
+
+
+def test_alert_carries_ma_and_last_report_price(tmp_path):
+    """Alert 應帶入均線資料與「上次出報告」的價格快照，供報告端引用。"""
+    state = StateStore(tmp_path / "alert_state.json")
+    state.load()
+    state.set_last_report("AAPL", 90.0, datetime.now(timezone.utc))
+    cfg = make_cfg()
+
+    alerts = get_new_alerts([make_quote()], lambda m: cfg, state)
+    assert len(alerts) == 1
+    a = alerts[0]
+    assert a.ma["20"] == 95.0
+    assert a.ma_deviation_pct["20"] == 5.26
+    assert a.last_report_price == 90.0
+    assert a.last_report_at is not None

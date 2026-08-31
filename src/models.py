@@ -36,4 +36,8 @@ class Alert:
     value: float
     threshold: float
     price: float  # 該標的現價（報告用）
+    ma: dict = field(default_factory=dict)  # 均線數值，{"20": 值, "60": 值, "200": 值}
+    ma_deviation_pct: dict = field(default_factory=dict)  # 對各 MA 的乖離率（%）
+    last_report_price: Optional[float] = None  # 上次出報告時的價格（報告比較用）
+    last_report_at: Optional[str] = None  # 上次出報告時間（ISO 字串）
     triggered_at: datetime = field(default_factory=datetime.utcnow)
