@@ -8,8 +8,8 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.3813741381192735,
+      "status": "clear",
+      "last_value": 4.167318245843245,
       "triggered_at": "2026-08-31T13:50:36.464772+00:00"
     },
     "ma_deviation_neg_200": {
