@@ -27,15 +27,15 @@
       "at": "2026-08-31T21:35:36.240797+00:00"
     },
     "intraday_surge": {
-      "status": "active",
-      "last_value": 5.505379844310036,
+      "status": "clear",
+      "last_value": -1.6143503857431698,
       "triggered_at": "2026-08-31T21:35:32.946892+00:00"
     }
   },
   "NVDA": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.051473669982009,
+      "status": "clear",
+      "last_value": 4.081174979279998,
       "triggered_at": "2026-08-31T19:00:51.013451+00:00"
     },
     "ma_deviation_pos_200": {
@@ -81,8 +81,8 @@
   },
   "SPCX": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 6.272261935409951,
+      "status": "clear",
+      "last_value": 3.9862651606760098,
       "triggered_at": "2026-08-31T19:50:36.712683+00:00"
     },
     "__last_report__": {
