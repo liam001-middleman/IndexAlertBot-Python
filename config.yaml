@@ -63,6 +63,8 @@ alerts:
     ma_deviation_pct: 5.0     # 乖離 MA 門檻（%）
     ma_periods: [20, 60, 200] # 要計算與監控的均線週期
   overrides:
+    us:
+      ma_deviation_pct: 3.0  # US MA deviation threshold 3% (test)
     crypto:
       intraday_change_pct: 10.0  # 加密貨幣波動大，門檻放寬
       ma_deviation_pct: 8.0
