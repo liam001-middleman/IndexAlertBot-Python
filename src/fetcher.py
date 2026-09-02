@@ -57,7 +57,8 @@ def _to_market_data(df: pd.DataFrame, symbol: str) -> MarketData:
 
 # ---------- yahoo ----------
 
-def _fetch_yahoo_market_data(symbol: str, period: str, interval: str) -> MarketData:
+def _fetch_yahoo_df(symbol: str, period: str, interval: str) -> pd.DataFrame:
+    """抓 Yahoo 日線並清理（去重、去除缺 Close/Open 的列）。"""
     try:
         ticker = yf.Ticker(symbol)
         df = ticker.history(period=period, interval=interval, auto_adjust=True)
@@ -69,7 +70,11 @@ def _fetch_yahoo_market_data(symbol: str, period: str, interval: str) -> MarketD
     df = df.dropna(subset=["Close", "Open"])
     if df.empty:
         raise FetchError(f"{symbol} 缺少 Close/Open 欄位")
-    return _to_market_data(df, symbol)
+    return df
+
+
+def _fetch_yahoo_market_data(symbol: str, period: str, interval: str) -> MarketData:
+    return _to_market_data(_fetch_yahoo_df(symbol, period, interval), symbol)
 
 
 # ---------- max（台灣交易所） ----------
@@ -121,11 +126,40 @@ def _fetch_max_market_data(symbol: str, limit: int = MAX_KLINE_LIMIT) -> MarketD
     return _to_market_data(parse_max_klines(payload), symbol)
 
 
+# ---------- USD→TWD 換匯（Yahoo 參考匯率） ----------
+
+USD_TWD_SYMBOL = "TWD=X"  # Yahoo 的 USD/TWD 即期匯率代號
+
+
+def _fetch_usd_twd_converted_df(usd_symbol: str, period: str, interval: str) -> pd.DataFrame:
+    """抓 USD 計價標的的日線，乘 USD/TWD 匯率換算成台幣。
+    匯率週末無報價，以最後一個有資料的工作日匯率往前填補（ffill）。
+    """
+    usd_df = _fetch_yahoo_df(usd_symbol, period, interval)
+    fx_df = _fetch_yahoo_df(USD_TWD_SYMBOL, period, interval)
+    fx = fx_df["Close"].reindex(usd_df.index).ffill().bfill()
+    if fx.isna().any():
+        raise FetchError(f"USD/TWD 匯率資料不足，無法換算 {usd_symbol}")
+    df = usd_df.copy()
+    df["Open"] = usd_df["Open"] * fx
+    df["Close"] = usd_df["Close"] * fx
+    return df
+
+
 # ---------- 入口 ----------
 
 def get_market_data(symbol: str, period: str = "2y", interval: str = "1d",
-                    provider: str = "yahoo") -> MarketData:
-    """依 provider 抓取單一標的的日線歷史，並整理出最新價、前收、日內漲跌幅。"""
+                    provider: str = "yahoo",
+                    source_symbol: Optional[str] = None,
+                    convert_to_twd: bool = False) -> MarketData:
+    """依 provider 抓取單一標的的日線歷史，並整理出最新價、前收、日內漲跌幅。
+    - convert_to_twd=True：抓 source_symbol（USD 計價）的日線，
+      再乘 USD/TWD（TWD=X）匯率換算成台幣，供台幣報價使用。
+    - provider == "max"：保留 MAX 交易所路徑（其 kline API 目前只回傳分鐘線）。
+    """
+    if convert_to_twd:
+        df = _fetch_usd_twd_converted_df(source_symbol or symbol, period, interval)
+        return _to_market_data(df, symbol)
     if provider == "max":
         return _fetch_max_market_data(symbol)
     return _fetch_yahoo_market_data(symbol, period, interval)

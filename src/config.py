@@ -15,6 +15,8 @@ class AssetConfig:
     name: str
     market: str  # us / tw / crypto
     provider: str = "yahoo"  # yahoo（Yahoo Finance） / max（MAX 交易所台幣報價）
+    source_symbol: Optional[str] = None  # 實際抓取代號（如 BTC-USD）；None = 直接用 symbol
+    convert_to_twd: bool = False  # True：抓 USD 日線並乘 USD/TWD 匯率換算成台幣
 
 
 @dataclass
@@ -90,6 +92,8 @@ def load_config(path: Optional[str] = None) -> Config:
             name=str(a.get("name", a["symbol"])),
             market=str(a.get("market", "us")),
             provider=str(a.get("provider", "yahoo")),
+            source_symbol=(a.get("source_symbol") or None),
+            convert_to_twd=bool(a.get("convert_to_twd", False)),
         )
         for a in raw.get("assets", [])
     ]

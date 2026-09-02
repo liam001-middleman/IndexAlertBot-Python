@@ -58,11 +58,15 @@ assets:
   - symbol: "btctwd"
     name: "比特幣"
     market: "crypto"
-    provider: "max"
+    provider: "yahoo"
+    source_symbol: "BTC-USD"
+    convert_to_twd: true
   - symbol: "ethtwd"
     name: "以太幣"
     market: "crypto"
-    provider: "max"
+    provider: "yahoo"
+    source_symbol: "ETH-USD"
+    convert_to_twd: true
 
 # 警報門檻：defaults 為所有市場的預設值
 # overrides 可依 market（us / tw / crypto）覆寫

@@ -88,7 +88,12 @@ def main() -> int:
     for asset in assets:
         try:
             md = get_market_data(
-                asset.symbol, cfg.history_period, cfg.history_interval, asset.provider
+                asset.symbol,
+                cfg.history_period,
+                cfg.history_interval,
+                asset.provider,
+                source_symbol=asset.source_symbol,
+                convert_to_twd=asset.convert_to_twd,
             )
             quote = build_quote(asset, md, cfg.alert_config_for(asset.market))
             quotes.append(quote)
