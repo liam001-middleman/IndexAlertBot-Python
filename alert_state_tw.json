@@ -64,5 +64,79 @@
       "last_value": 4.394623762894729,
       "triggered_at": "2026-09-02T01:30:46.200425+00:00"
     }
+  },
+  "00919.TW": {
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 76.54462427025106,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 5.3078230277575145,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 7.787450687350018,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 31.072046456361097,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "__last_report__": {
+      "price": 32.2599983215332,
+      "at": "2026-09-02T04:55:42.043244+00:00"
+    }
+  },
+  "00878.TW": {
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 5.091780994239619,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 33.66983950100613,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "__last_report__": {
+      "price": 33.650001525878906,
+      "at": "2026-09-02T04:55:42.043244+00:00"
+    }
+  },
+  "00918.TW": {
+    "rsi_overbought": {
+      "status": "active",
+      "last_value": 76.82079633693951,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_60": {
+      "status": "active",
+      "last_value": 9.180727639276737,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 39.829648414228394,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "__last_report__": {
+      "price": 35.380001068115234,
+      "at": "2026-09-02T04:55:42.043244+00:00"
+    }
+  },
+  "00929.TW": {
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 31.54291873530866,
+      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+    },
+    "__last_report__": {
+      "price": 29.420000076293945,
+      "at": "2026-09-02T04:55:42.043244+00:00"
+    }
   }
 }
