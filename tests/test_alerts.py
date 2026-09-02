@@ -105,6 +105,7 @@ def test_alert_carries_ma_and_last_report_price(tmp_path):
     assert len(alerts) == 1
     a = alerts[0]
     assert a.ma["20"] == 95.0
+    assert a.rsi == 75.0  # 帶入 Quote 的 RSI
     assert a.ma_deviation_pct["20"] == 5.26
     assert a.last_report_price == 90.0
     assert a.last_report_at is not None

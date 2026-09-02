@@ -166,6 +166,7 @@ def get_new_alerts(
                             value=float(cond["value"]),
                             threshold=float(cond["threshold"]),
                             price=quote.price,
+                            rsi=quote.rsi,
                             ma=quote.ma,
                             ma_deviation_pct=quote.ma_deviation_pct,
                             last_report_price=last_report.get("price"),

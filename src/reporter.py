@@ -16,8 +16,9 @@ SYSTEM_PROMPT = (
     "2. 每個標的獨立一個區塊，依嚴重度排序（critical > warning > info）：\n"
     "   第一行：標的名稱（代號，代號請用可讀格式，例如 ethtwd 寫成 ETH/TWD）\n"
     "   第二行：現價（必列，任何警報都要有現價）\n"
-    "   第三行：上次報告價格（若使用者有提供該資料：上次報告價格：xxx（較上次 +x.xx%）；無則省略此行）\n"
-    "   第四行：均線（若使用者有提供該資料：均線：MA20=xxx（乖離 +x.xx%）、MA60=xxx（乖離 +x.xx%）、MA200=xxx（乖離 +x.xx%））\n"
+    "   第三行：RSI（若使用者有提供該資料：RSI(14)：xxx；無則省略此行）\n"
+    "   第四行：上次報告價格（若使用者有提供該資料：上次報告價格：xxx（較上次 +x.xx%）；無則省略此行）\n"
+    "   第五行：均線（若使用者有提供該資料：均線：MA20=xxx（乖離 +x.xx%）、MA60=xxx（乖離 +x.xx%）、MA200=xxx（乖離 +x.xx%））\n"
     "   之後：每一則警報一行（警報名稱＋指標數值＋門檻）\n"
     "   最後：1~2 句簡短風險說明\n"
     "3. 不要使用任何 Markdown 符號（如 **、##、-、*）、不要使用 emoji、不要畫表格與分隔線。\n"
@@ -60,6 +61,8 @@ def build_user_prompt(alerts: List[Alert]) -> str:
         lines.append(f"標的：{a.name}（{a.symbol}，{a.market}）")
         lines.append(f"嚴重度：{a.severity}")
         lines.append(f"現價：{a.price:.2f}")
+        if a.rsi is not None:
+            lines.append(f"RSI：{a.rsi:.1f}")
         if a.last_report_price is not None:
             lines.append(f"上次報告價格：{a.last_report_price:.2f}")
         ma_txt = _format_ma(a)
@@ -108,6 +111,8 @@ def build_fallback_report(alerts: List[Alert]) -> str:
     lines = [f"共 {len(alerts)} 則新觸發警報（DeepSeek 摘要暫時不可用，以下為原始清單）：\n"]
     for a in alerts:
         lines.append(a.detail)
+        if a.rsi is not None:
+            lines.append(f"RSI：{a.rsi:.1f}")
         ma_txt = _format_ma(a)
         if ma_txt:
             lines.append(f"均線：{ma_txt}")

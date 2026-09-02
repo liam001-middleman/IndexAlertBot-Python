@@ -19,6 +19,7 @@ def make_alert(severity="warning", alert_name="RSI 超買", detail="測試詳細
         value=75.0,
         threshold=70.0,
         price=314.58,
+        rsi=64.2,
         ma={"20": 300.0, "60": 290.0, "200": 280.0},
         ma_deviation_pct={"20": 4.86, "60": 8.48, "200": 12.35},
         last_report_price=305.0,
@@ -43,6 +44,7 @@ def test_build_user_prompt_contains_ma_and_last_report():
     assert "乖離" in prompt
     assert "上次報告價格" in prompt
     assert "305.00" in prompt  # 上次報告價格
+    assert "RSI：64.2" in prompt  # RSI 背景資訊
 
 
 def test_build_fallback_report():
@@ -52,6 +54,7 @@ def test_build_fallback_report():
     assert "現價 314.58" in report
     assert "均線" in report
     assert "MA20=300.00" in report
+    assert "RSI：64.2" in report
     assert "上次報告價格" in report
     assert "僅供參考" in report
     assert "不構成投資建議" in report
