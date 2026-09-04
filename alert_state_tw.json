@@ -51,13 +51,13 @@
       "triggered_at": "2026-08-28T13:37:43.498894+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 4.3956043956044,
-      "triggered_at": "2026-09-01T01:15:37.530693+00:00"
+      "status": "active",
+      "last_value": 6.048791355686749,
+      "triggered_at": "2026-09-04T01:20:40.556269+00:00"
     },
     "__last_report__": {
-      "price": 506.0,
-      "at": "2026-09-02T01:30:49.296248+00:00"
+      "price": 476.0,
+      "at": "2026-09-04T01:20:45.370993+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "clear",
