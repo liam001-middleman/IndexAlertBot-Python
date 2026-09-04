@@ -32,8 +32,8 @@
   },
   "btctwd": {
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 70.78398484633951,
+      "status": "clear",
+      "last_value": 69.8401892116597,
       "triggered_at": "2026-09-04T12:40:35.063506+00:00"
     },
     "__last_report__": {
