@@ -15,8 +15,8 @@
   },
   "2327.TW": {
     "intraday_surge": {
-      "status": "active",
-      "last_value": 6.049822064056939,
+      "status": "clear",
+      "last_value": 5.6939501779359425,
       "triggered_at": "2026-09-07T02:50:51.807945+00:00"
     },
     "ma_deviation_neg_60": {
