@@ -114,9 +114,9 @@
   },
   "00918.TW": {
     "rsi_overbought": {
-      "status": "clear",
-      "last_value": 68.8713098637867,
-      "triggered_at": "2026-09-02T04:55:34.827671+00:00"
+      "status": "active",
+      "last_value": 70.30288685213884,
+      "triggered_at": "2026-09-08T03:40:43.830014+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "active",
@@ -129,8 +129,8 @@
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "__last_report__": {
-      "price": 35.880001068115234,
-      "at": "2026-09-04T05:50:48.211575+00:00"
+      "price": 35.470001220703125,
+      "at": "2026-09-08T03:40:46.771466+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
