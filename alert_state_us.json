@@ -195,5 +195,31 @@
       "last_value": 3.299222427026182,
       "triggered_at": "2026-09-08T13:45:40.903129+00:00"
     }
+  },
+  "NOK": {
+    "intraday_surge": {
+      "status": "active",
+      "last_value": 6.231306247650876,
+      "triggered_at": "2026-09-08T15:30:50.738763+00:00"
+    },
+    "ma_deviation_pos_20": {
+      "status": "active",
+      "last_value": 4.1417195681128876,
+      "triggered_at": "2026-09-08T15:30:50.738763+00:00"
+    },
+    "ma_deviation_neg_60": {
+      "status": "active",
+      "last_value": -3.7206066664449535,
+      "triggered_at": "2026-09-08T15:30:50.738763+00:00"
+    },
+    "ma_deviation_pos_200": {
+      "status": "active",
+      "last_value": 10.688358359547703,
+      "triggered_at": "2026-09-08T15:30:50.738763+00:00"
+    },
+    "__last_report__": {
+      "price": 10.654999732971191,
+      "at": "2026-09-08T15:30:55.052005+00:00"
+    }
   }
 }
