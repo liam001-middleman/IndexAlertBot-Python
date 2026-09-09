@@ -136,8 +136,8 @@
   },
   "ORCL": {
     "ma_deviation_neg_200": {
-      "status": "active",
-      "last_value": -3.0847703766062815,
+      "status": "clear",
+      "last_value": -2.858776633474173,
       "triggered_at": "2026-09-09T15:05:41.427931+00:00"
     },
     "ma_deviation_neg_20": {
