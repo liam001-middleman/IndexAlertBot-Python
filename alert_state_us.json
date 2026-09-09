@@ -136,8 +136,8 @@
   },
   "ORCL": {
     "ma_deviation_neg_200": {
-      "status": "active",
-      "last_value": -3.189447874945492,
+      "status": "clear",
+      "last_value": -2.25516899612991,
       "triggered_at": "2026-09-08T18:25:35.323047+00:00"
     },
     "ma_deviation_neg_20": {
@@ -198,8 +198,8 @@
   },
   "NOK": {
     "intraday_surge": {
-      "status": "active",
-      "last_value": 6.231306247650876,
+      "status": "clear",
+      "last_value": 3.4741864083227028,
       "triggered_at": "2026-09-08T15:30:50.738763+00:00"
     },
     "ma_deviation_pos_20": {
@@ -208,8 +208,8 @@
       "triggered_at": "2026-09-08T15:30:50.738763+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -3.105403558729527,
+      "status": "clear",
+      "last_value": 0.14843977894868737,
       "triggered_at": "2026-09-08T19:20:44.928539+00:00"
     },
     "ma_deviation_pos_200": {
