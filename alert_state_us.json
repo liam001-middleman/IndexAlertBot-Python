@@ -136,9 +136,9 @@
   },
   "ORCL": {
     "ma_deviation_neg_200": {
-      "status": "clear",
-      "last_value": -2.858776633474173,
-      "triggered_at": "2026-09-09T15:05:41.427931+00:00"
+      "status": "active",
+      "last_value": -3.1145084137543666,
+      "triggered_at": "2026-09-09T17:05:38.857943+00:00"
     },
     "ma_deviation_neg_20": {
       "status": "clear",
@@ -151,8 +151,8 @@
       "triggered_at": "2026-09-01T15:15:40.093473+00:00"
     },
     "__last_report__": {
-      "price": 162.1699981689453,
-      "at": "2026-09-09T15:05:44.312619+00:00"
+      "price": 162.1199951171875,
+      "at": "2026-09-09T17:05:41.414289+00:00"
     },
     "intraday_drop": {
       "status": "clear",
