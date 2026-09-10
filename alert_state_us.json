@@ -79,8 +79,8 @@
   },
   "KLAC": {
     "ma_deviation_neg_20": {
-      "status": "active",
-      "last_value": -3.019414526590242,
+      "status": "clear",
+      "last_value": -2.983477655973886,
       "triggered_at": "2026-09-10T15:45:39.582870+00:00"
     },
     "ma_deviation_neg_60": {
