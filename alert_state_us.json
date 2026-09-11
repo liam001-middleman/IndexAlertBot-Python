@@ -22,9 +22,9 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 2.9912737769318505,
-      "triggered_at": "2026-09-11T16:05:39.687558+00:00"
+      "status": "active",
+      "last_value": 3.056735974390575,
+      "triggered_at": "2026-09-11T17:30:50.253955+00:00"
     },
     "ma_deviation_neg_200": {
       "status": "active",
@@ -37,8 +37,8 @@
       "triggered_at": "2026-09-04T18:40:40.113976+00:00"
     },
     "__last_report__": {
-      "price": 366.5,
-      "at": "2026-09-11T16:05:43.340575+00:00"
+      "price": 366.0150146484375,
+      "at": "2026-09-11T17:30:53.950943+00:00"
     },
     "intraday_surge": {
       "status": "clear",
