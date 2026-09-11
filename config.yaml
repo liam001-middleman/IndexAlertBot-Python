@@ -85,8 +85,8 @@ alerts:
     us:
       ma_deviation_pct: 3.0  # US MA deviation threshold 3% (test)
     crypto:
-      intraday_change_pct: 10.0  # 加密貨幣波動大，門檻放寬
-      ma_deviation_pct: 8.0
+      intraday_change_pct: 5.0   # crypto: same as default threshold
+      ma_deviation_pct: 5.0      # crypto: same as default threshold
     tw:
       intraday_change_pct: 6.0
 
