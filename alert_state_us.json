@@ -22,8 +22,8 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.094118795672436,
+      "status": "clear",
+      "last_value": 2.94456236775251,
       "triggered_at": "2026-09-11T19:45:48.082713+00:00"
     },
     "ma_deviation_neg_200": {
