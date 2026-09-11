@@ -72,8 +72,8 @@
   },
   "00919.TW": {
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 70.4007491297213,
+      "status": "clear",
+      "last_value": 69.94131411796137,
       "triggered_at": "2026-09-11T04:40:38.900331+00:00"
     },
     "ma_deviation_pos_20": {
