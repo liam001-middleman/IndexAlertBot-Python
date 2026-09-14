@@ -103,9 +103,9 @@
   },
   "00878.TW": {
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 4.437546114820423,
-      "triggered_at": "2026-09-11T04:15:40.935830+00:00"
+      "status": "active",
+      "last_value": 5.0447029472796086,
+      "triggered_at": "2026-09-14T02:20:46.248053+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
@@ -113,8 +113,8 @@
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "__last_report__": {
-      "price": 33.970001220703125,
-      "at": "2026-09-11T04:15:43.985829+00:00"
+      "price": 34.0,
+      "at": "2026-09-14T02:20:49.037893+00:00"
     },
     "rsi_overbought": {
       "status": "clear",
