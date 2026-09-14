@@ -144,8 +144,8 @@
       "triggered_at": "2026-09-04T19:35:33.224961+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.033244339637992,
+      "status": "clear",
+      "last_value": -4.900235689350672,
       "triggered_at": "2026-09-14T17:25:37.758232+00:00"
     },
     "ma_deviation_neg_20": {
