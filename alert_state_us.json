@@ -77,8 +77,8 @@
       "triggered_at": "2026-09-08T15:10:43.211486+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "active",
-      "last_value": -3.0869349011788274,
+      "status": "clear",
+      "last_value": -2.991174552755681,
       "triggered_at": "2026-09-15T19:35:48.010657+00:00"
     }
   },
@@ -134,8 +134,8 @@
       "at": "2026-09-15T17:35:40.566059+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -3.0150959582119663,
+      "status": "clear",
+      "last_value": -2.869763921811165,
       "triggered_at": "2026-09-15T17:35:37.303611+00:00"
     },
     "ma_deviation_pos_60": {
