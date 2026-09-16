@@ -228,8 +228,8 @@
   },
   "NOK": {
     "intraday_surge": {
-      "status": "active",
-      "last_value": 5.1829290749320505,
+      "status": "clear",
+      "last_value": 4.979672393493771,
       "triggered_at": "2026-09-16T13:30:45.598498+00:00"
     },
     "ma_deviation_pos_20": {
