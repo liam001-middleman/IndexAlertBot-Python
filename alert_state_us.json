@@ -46,8 +46,8 @@
       "triggered_at": "2026-09-03T14:10:46.623605+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.2142898656428476,
+      "status": "clear",
+      "last_value": 2.9038054396271074,
       "triggered_at": "2026-09-17T14:05:39.697986+00:00"
     },
     "intraday_drop": {
@@ -233,9 +233,9 @@
       "triggered_at": "2026-09-17T13:31:25.044027+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 2.9629152061049053,
-      "triggered_at": "2026-09-17T14:35:36.395054+00:00"
+      "status": "active",
+      "last_value": 3.0082732031679695,
+      "triggered_at": "2026-09-17T14:45:37.864496+00:00"
     },
     "ma_deviation_neg_60": {
       "status": "clear",
@@ -248,8 +248,8 @@
       "triggered_at": "2026-09-16T19:40:35.229354+00:00"
     },
     "__last_report__": {
-      "price": 10.570099830627441,
-      "at": "2026-09-17T14:35:40.223604+00:00"
+      "price": 10.555000305175781,
+      "at": "2026-09-17T14:45:40.770914+00:00"
     },
     "intraday_drop": {
       "status": "clear",
