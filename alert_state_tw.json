@@ -65,8 +65,8 @@
       "triggered_at": "2026-09-02T01:30:46.200425+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -5.137914326220773,
+      "status": "clear",
+      "last_value": -4.714052434188092,
       "triggered_at": "2026-09-18T01:30:50.718775+00:00"
     },
     "ma_deviation_neg_20": {
