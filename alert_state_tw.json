@@ -113,24 +113,24 @@
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "__last_report__": {
-      "price": 34.68000030517578,
-      "at": "2026-09-17T01:25:38.225670+00:00"
+      "price": 35.0099983215332,
+      "at": "2026-09-18T01:25:35.829421+00:00"
     },
     "rsi_overbought": {
-      "status": "clear",
-      "last_value": 69.30651719756727,
-      "triggered_at": "2026-09-17T01:25:33.590257+00:00"
+      "status": "active",
+      "last_value": 74.14990674064072,
+      "triggered_at": "2026-09-18T01:25:33.242281+00:00"
     }
   },
   "00918.TW": {
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 72.9513715037839,
+      "status": "clear",
+      "last_value": 48.03151106870957,
       "triggered_at": "2026-09-17T01:25:33.590257+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 9.180727639276737,
+      "status": "clear",
+      "last_value": 3.605626926022694,
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "ma_deviation_pos_200": {
