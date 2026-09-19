@@ -30,8 +30,8 @@
       "triggered_at": "2026-09-18T17:45:40.256233+00:00"
     },
     "intraday_surge": {
-      "status": "active",
-      "last_value": 5.385265942550738,
+      "status": "clear",
+      "last_value": 0.48453274181433603,
       "triggered_at": "2026-09-18T15:50:42.762019+00:00"
     },
     "intraday_drop": {
@@ -71,8 +71,8 @@
       "triggered_at": "2026-09-04T11:35:37.311322+00:00"
     },
     "intraday_surge": {
-      "status": "active",
-      "last_value": 5.22207110394069,
+      "status": "clear",
+      "last_value": 0.15887383059657742,
       "triggered_at": "2026-09-18T14:15:42.348886+00:00"
     }
   }
