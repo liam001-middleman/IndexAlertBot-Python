@@ -118,8 +118,8 @@
       "triggered_at": "2026-09-17T14:25:41.068519+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.0505992601954137,
+      "status": "clear",
+      "last_value": 2.2192757126536757,
       "triggered_at": "2026-09-21T16:30:51.228122+00:00"
     }
   },
@@ -238,8 +238,8 @@
       "triggered_at": "2026-09-17T19:50:40.099206+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.1520034934214523,
+      "status": "clear",
+      "last_value": 2.3831397573947966,
       "triggered_at": "2026-09-18T17:40:41.940556+00:00"
     },
     "ma_deviation_neg_60": {
@@ -267,8 +267,8 @@
       "triggered_at": "2026-09-15T16:30:48.866660+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.188032429030293,
+      "status": "clear",
+      "last_value": 1.0014321623284517,
       "triggered_at": "2026-09-21T14:25:36.854452+00:00"
     }
   }
