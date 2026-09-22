@@ -1,13 +1,13 @@
 {
   "ethtwd": {
     "rsi_overbought": {
-      "status": "clear",
-      "last_value": 69.86849701983536,
-      "triggered_at": "2026-09-21T14:15:43.017119+00:00"
+      "status": "active",
+      "last_value": 70.00164356883968,
+      "triggered_at": "2026-09-22T05:35:36.826098+00:00"
     },
     "__last_report__": {
-      "price": 88646.30257088318,
-      "at": "2026-09-21T23:55:47.133841+00:00"
+      "price": 86923.680613501,
+      "at": "2026-09-22T05:35:40.216116+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
