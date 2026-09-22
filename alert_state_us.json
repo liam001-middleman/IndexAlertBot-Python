@@ -207,8 +207,8 @@
   },
   "SPCX": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.1182169697921096,
+      "status": "clear",
+      "last_value": 2.9610519725836326,
       "triggered_at": "2026-09-16T13:40:39.993705+00:00"
     },
     "__last_report__": {
@@ -238,9 +238,9 @@
       "triggered_at": "2026-09-17T19:50:40.099206+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 2.3831397573947966,
-      "triggered_at": "2026-09-18T17:40:41.940556+00:00"
+      "status": "active",
+      "last_value": 3.803886548610083,
+      "triggered_at": "2026-09-22T13:35:39.137180+00:00"
     },
     "ma_deviation_neg_60": {
       "status": "clear",
@@ -253,8 +253,8 @@
       "triggered_at": "2026-09-16T19:40:35.229354+00:00"
     },
     "__last_report__": {
-      "price": 10.85949993133545,
-      "at": "2026-09-21T14:25:40.241979+00:00"
+      "price": 10.744999885559082,
+      "at": "2026-09-22T13:35:41.906163+00:00"
     },
     "intraday_drop": {
       "status": "clear",
