@@ -71,8 +71,8 @@
       "triggered_at": "2026-09-21T08:40:39.281105+00:00"
     },
     "intraday_surge": {
-      "status": "active",
-      "last_value": 5.1189485641310135,
+      "status": "clear",
+      "last_value": 4.977521250683836,
       "triggered_at": "2026-09-21T14:10:41.606822+00:00"
     }
   }
