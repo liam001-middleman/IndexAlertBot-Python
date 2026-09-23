@@ -190,8 +190,8 @@
       "triggered_at": "2026-09-14T14:25:40.791041+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.0006925225408585,
+      "status": "clear",
+      "last_value": 2.987461129307598,
       "triggered_at": "2026-09-18T17:30:49.133267+00:00"
     },
     "ma_deviation_pos_20": {
