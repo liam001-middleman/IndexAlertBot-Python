@@ -138,11 +138,17 @@ repo 內任何檔案（含歷史）都不會、也不應該出現金鑰：
 
 ### 三道防線
 
-| 防線 | 位置 | 作用 |
-|---|---|---|
-| Secret scanning / Push protection | repo → Settings → Code security | 誤 commit 金鑰時，由 GitHub 直接攔阻 push 並告警 |
-| gitleaks CI 掃描 | `.github/workflows/secret-scan.yml` + `.gitleaks.toml` | push（排除狀態檔）／PR／每週排程掃描**全部 git 歷史**，疑似金鑰就讓 CI 紅燈 |
-| Secrets fail-fast 檢查 | 三個 `alerts-*.yml` 的 `Check required secrets` | 任一 Secret 未設定就立刻失敗，避免空金鑰靜默降級成 fallback 報告 |
+| 防線 | 位置 | 預設狀態 | 作用 |
+|---|---|---|---|
+| **Push protection for users**（帳號層） | GitHub 個人帳號層級設定 | **開啟** | 擋住「你自己」把金鑰推到**任何 public repo**（不會產生 repo 告警） |
+| **Secret scanning**（repo 層） | repo → Settings → **Security and quality** → **Advanced Security** → 啟用 **Secret Protection** | 需啟用 | 掃描 repo 找金鑰 → 在 **Security and quality** 分頁產生告警，並通知支援的 partner 供應商 |
+| **Push protection**（repo 層） | 同一頁 **Secret Protection** 區塊 → **Push protection** | **預設關閉** | push 到 repo 前就擋下含金鑰的 push；bypass 會留稽核記錄與通知 |
+| **gitleaks CI** | `.github/workflows/secret-scan.yml` + `.gitleaks.toml` | 已上線 | push（排除狀態檔）／PR／每週排程掃**全部 git 歷史**，疑似金鑰就讓 CI 紅燈 |
+| **Secrets fail-fast 檢查** | 三個 `alerts-*.yml` 的 `Check required secrets` | 已上線 | 任一 Secret 未設定就立刻失敗，避免空金鑰靜默降級成 fallback 報告 |
+
+> ⚠️ **Secret scanning 沒有獨立開關**：它會隨 **Secret Protection** 一起啟用，
+> 所以 Settings 頁面只會看到 `Secret Protection` 與 `Push protection`，不會看到單獨的 `Secret scanning` 開關（這是正常的）。
+> 另外 **Code scanning** 是另一套功能（CodeQL / AI Scan 掃程式碼漏洞），跟金鑰無關，不必為了 secret scanning 去開它。
 
 > `secret-scan.yml` 用 `paths-ignore: alert_state_*.json` 避開每 5 分鐘一次的狀態檔 commit（否則會被排程洗版），
 > 並以 `cron: '0 0 * * 1'`（每週一 00:00 UTC）做一次全歷史複掃補漏。
@@ -150,9 +156,26 @@ repo 內任何檔案（含歷史）都不會、也不應該出現金鑰：
 
 ### 需要手動做的一次性設定
 
-1. repo → **Settings → Code security**：確認 **Secret scanning** 與 **Push protection** 已開啟
-   （public repo 免費；若看不到選項，先確認 repo 是 public）
-2. repo → **Settings → Secrets and variables → Actions**：確認 3 個 Secrets 都存在
+1. repo → **Settings** → 左側 **「Security and quality」** 區段 → **Advanced Security**
+   （新版介面可能顯示為 **Code security**；認關鍵字 `Secret Protection` 就不會找錯）
+2. 若 **Secret Protection** 右側有 **Enable** 按鈕 → 點它 → 檢視影響後按 **Enable Secret Protection**
+   - **Secret scanning 沒有獨立開關**，啟用 Secret Protection 之後就開始掃描與告警
+3. 在同一頁的 **Secret Protection** 區塊，把 **Push protection** 按 **Enable**
+   - 這項**預設是關閉的**（官方文件：*Is disabled by default*），必須手動開
+   - 開啟後，含金鑰的 push 會被直接擋下，並在 **Security and quality** 分頁留下告警／稽核記錄
+4. （可選，同一頁免費）加開 **Generic patterns**、**Generic secret detection**（AI 偵測非結構化機密）、**Validity checks**
+5. repo → **Settings → Secrets and variables → Actions**：確認 3 個 Secrets 都存在
+
+驗證方式：
+
+- `https://github.com/<owner>/<repo>/security/secret-scanning` → 應出現 **Secret scanning** 與告警數（0 筆是正常的）
+- `https://github.com/<owner>/<repo>/security` → **Security and quality** 分頁（所有安全告警的入口）
+
+> 本專案兩把金鑰都在 gitleaks 的守備範圍內（本機以 `gitleaks stdin` 實測）：
+> Telegram Bot Token 由 `telegram-bot-api-token` 規則攔下；
+> DeepSeek 金鑰（`sk-` 開頭的高熵字串）由 `generic-api-key` 規則攔下。
+> GitHub 內建 pattern 清單有數百個供應商、本專案未逐一確認 DeepSeek 是否在內，
+> 所以 CI 這層（可自行維護規則）才是涵蓋第 3 方 pattern 的保底。
 
 ### 本機自行掃描（可選）
 
