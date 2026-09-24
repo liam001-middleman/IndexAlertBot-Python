@@ -35,7 +35,8 @@
 ├── .github/workflows/
 │   ├── alerts-crypto.yml             # 加密貨幣 24/7，每 5 分鐘
 │   ├── alerts-tw.yml                 # 台股開盤時段，每 5 分鐘
-│   └── alerts-us.yml                 # 美股開盤時段，每 5 分鐘
+│   ├── alerts-us.yml                 # 美股開盤時段，每 5 分鐘
+│   └── secret-scan.yml               # gitleaks 金鑰外洩掃描（push / PR / 每週排程）
 ├── src/
 │   ├── models.py                      # Quote / Alert 資料類別
 │   ├── config.py                      # 讀取 config.yaml + 環境變數
@@ -48,6 +49,8 @@
 ├── tests/                             # 單元測試（指標、警報、狀態、報告）
 ├── main.py                            # 主程式進入點
 ├── config.yaml                        # 標的、門檻、各項設定
+├── .gitleaks.toml                     # gitleaks 規則（官方預設 + 放行文件示意字串）
+├── .env.example                       # 環境變數範本（值留空；真金鑰只放 GitHub Secrets）
 ├── alert_state_crypto.json            # 加密貨幣警報狀態（自動更新、commit 回 repo）
 ├── alert_state_tw.json                # 台股警報狀態（自動更新、commit 回 repo）
 ├── alert_state_us.json                # 美股警報狀態（自動更新、commit 回 repo）
@@ -105,6 +108,9 @@ python main.py
 | `TELEGRAM_BOT_TOKEN` | Telegram Bot Token（@BotFather 建立） |
 | `TELEGRAM_CHAT_ID` | 接收通知的 Chat ID（@userinfobot 查詢） |
 
+> 未設定時，`alerts-*.yml` 的 fail-fast 檢查（`Check required secrets`）會直接讓 workflow 失敗，
+> 並在摘要印出缺少的變數名稱；只檢查變數是否存在，不會印出內容（詳見「金鑰安全」）。
+
 ## 部署到 GitHub Actions
 
 1. 建立 GitHub repo 並 push 此專案
@@ -117,6 +123,53 @@ python main.py
    各一次（workflow_dispatch）驗證，之後依上表排程自動執行
 
 > 排程一律使用 UTC 時間；台股時段 = 台灣 09:00–13:55，美股時段含冬夏令誤差（見下方注意事項）。
+
+## 金鑰安全（Public repo 必讀）
+
+本 repo 是 **public**，程式碼與 **commit 歷史**任何人都讀得到，所以金鑰一律只放在 GitHub Secrets，
+repo 內任何檔案（含歷史）都不會、也不應該出現金鑰：
+
+- 程式只從**環境變數**讀取：`DEEPSEEK_API_KEY`、`TELEGRAM_BOT_TOKEN`、`TELEGRAM_CHAT_ID`（見 `src/config.py`）
+- `.gitignore` 已忽略 `.env`、`.env.*`、`*.env`、`*.pem`、`*.key`；repo 內只有**值為空**的 `.env.example`
+- Workflow 以 `${{ secrets.XXX }}` 注入；Secrets 的值不會出現在 repo 或執行日誌中
+- 程式不會把金鑰印出來（`src/reporter.py` 只把 key 放進 `Authorization` header，`requests` 的錯誤訊息不含 header）；
+  log 等級固定 `INFO`，**請勿改成 `DEBUG`**（`urllib3` / `http.client` 的 DEBUG 會印出 request headers）
+- public repo 的 **Actions 執行日誌是公開的**，任何會被印出的內容都等於公開
+
+### 三道防線
+
+| 防線 | 位置 | 作用 |
+|---|---|---|
+| Secret scanning / Push protection | repo → Settings → Code security | 誤 commit 金鑰時，由 GitHub 直接攔阻 push 並告警 |
+| gitleaks CI 掃描 | `.github/workflows/secret-scan.yml` + `.gitleaks.toml` | push（排除狀態檔）／PR／每週排程掃描**全部 git 歷史**，疑似金鑰就讓 CI 紅燈 |
+| Secrets fail-fast 檢查 | 三個 `alerts-*.yml` 的 `Check required secrets` | 任一 Secret 未設定就立刻失敗，避免空金鑰靜默降級成 fallback 報告 |
+
+> `secret-scan.yml` 用 `paths-ignore: alert_state_*.json` 避開每 5 分鐘一次的狀態檔 commit（否則會被排程洗版），
+> 並以 `cron: '0 0 * * 1'`（每週一 00:00 UTC）做一次全歷史複掃補漏。
+> gitleaks 版本與 sha256 皆鎖定，安裝後以 `sha256sum -c` 驗證才執行。
+
+### 需要手動做的一次性設定
+
+1. repo → **Settings → Code security**：確認 **Secret scanning** 與 **Push protection** 已開啟
+   （public repo 免費；若看不到選項，先確認 repo 是 public）
+2. repo → **Settings → Secrets and variables → Actions**：確認 3 個 Secrets 都存在
+
+### 本機自行掃描（可選）
+
+```bash
+# 先安裝 gitleaks（https://github.com/gitleaks/gitleaks/releases）
+gitleaks git . --config .gitleaks.toml --log-opts="--all" --redact --no-banner -v  # 掃全部歷史
+gitleaks dir . --config .gitleaks.toml --redact --no-banner -v                     # 掃工作目錄
+```
+
+### 萬一金鑰外洩的處理順序（重要）
+
+1. **先撤銷、再清理**：立刻到 DeepSeek 平台撤銷該金鑰並重新簽發（Telegram 則用 @BotFather `/revoke`），
+   把新值更新到 GitHub Secrets
+   - 這一步必須最先做：金鑰一旦被爬蟲掃走，再怎麼改 git 歷史都救不回已經流出的事實
+2. 檢查該金鑰的用量／帳單是否有異常呼叫
+3. 最後才清理歷史（`git filter-repo` 或 BFG）並 force push
+4. 若金鑰曾出現在 Actions 日誌中，記得一併刪除那些 run 的日誌
 
 ## 運作流程
 

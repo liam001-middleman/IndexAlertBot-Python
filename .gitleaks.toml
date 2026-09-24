@@ -1,0 +1,15 @@
+# gitleaks 設定（CI 掃描：.github/workflows/secret-scan.yml）
+# 沿用官方預設規則集，只額外放行「文件中的示意字串」，避免誤報。
+# 注意：.env.example 刻意「不」放行 —— 若有人把真金鑰填進去，仍必須被掃出來。
+title = "IndexAlertBot gitleaks config"
+
+[extend]
+# 使用 gitleaks 內建規則（含各家 API key、私鑰、token 等）
+useDefault = true
+
+[allowlist]
+description = "README / 文件中的示範用佔位字串（非真金鑰）"
+regexes = [
+  '''sk-xxx''',      # README 範例：$env:DEEPSEEK_API_KEY = "sk-xxx"
+  '''123456:ABC''',  # README 範例：Telegram Bot Token
+]

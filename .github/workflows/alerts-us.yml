@@ -35,6 +35,24 @@ jobs:
           pip install pytest
           python -m pytest tests -q
 
+      - name: Check required secrets
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          missing=""
+          for name in DEEPSEEK_API_KEY TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID; do
+            if [ -z "${!name}" ]; then
+              missing="$missing $name"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::缺少必要的 Secrets:${missing}（請到 repo 的 Settings → Secrets and variables → Actions 新增；此步驟只檢查是否存在，不會印出內容）"
+            exit 1
+          fi
+          echo "::notice::3 個必要 Secrets 皆已設定（內容不會印出）"
+
       - name: Run alert bot (US)
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}

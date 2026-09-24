@@ -7,6 +7,13 @@ venv/
 
 # 環境變數（機密）
 .env
+.env.*
+*.env
+!.env.example
+
+# 憑證類檔案（保底，避免誤 commit）
+*.pem
+*.key
 
 # 測試與工具快取
 .pytest_cache/
