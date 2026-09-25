@@ -25,8 +25,8 @@
       "triggered_at": "2026-09-02T08:40:35.153873+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.058860756817878,
+      "status": "clear",
+      "last_value": 4.922920209468129,
       "triggered_at": "2026-09-25T18:00:59.965359+00:00"
     },
     "intraday_surge": {
@@ -66,8 +66,8 @@
       "triggered_at": "2026-09-02T08:40:35.153873+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.001969986575685,
+      "status": "clear",
+      "last_value": 4.873200374885237,
       "triggered_at": "2026-09-25T20:15:40.340770+00:00"
     },
     "intraday_surge": {
