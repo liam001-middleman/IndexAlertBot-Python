@@ -47,8 +47,8 @@
       "triggered_at": "2026-09-23T13:40:39.471741+00:00"
     },
     "__last_report__": {
-      "price": 2690222.263212204,
-      "at": "2026-09-26T08:35:41.609997+00:00"
+      "price": 2687823.771392405,
+      "at": "2026-09-26T11:00:58.052067+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
@@ -66,9 +66,9 @@
       "triggered_at": "2026-09-02T08:40:35.153873+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 4.9545816361961075,
-      "triggered_at": "2026-09-26T08:35:38.550462+00:00"
+      "status": "active",
+      "last_value": 5.024856088436143,
+      "triggered_at": "2026-09-26T11:00:54.846674+00:00"
     },
     "intraday_surge": {
       "status": "clear",
