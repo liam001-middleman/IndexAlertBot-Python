@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-09-28T19:35:38.154549+00:00",
+ "fetched_at": "2026-09-28T20:40:45.502999+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-09-28T19:35:37.916544+00:00",
-   "attempt_at": "2026-09-28T19:35:37.916544+00:00",
+   "at": "2026-09-28T20:40:45.103967+00:00",
+   "attempt_at": "2026-09-28T20:40:45.103967+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-09-28T19:35:38.021723+00:00",
-   "attempt_at": "2026-09-28T19:35:38.021723+00:00",
+   "at": "2026-09-28T20:40:45.329607+00:00",
+   "attempt_at": "2026-09-28T20:40:45.329607+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-09-28T19:35:38.154484+00:00",
-   "attempt_at": "2026-09-28T19:35:38.154484+00:00",
+   "at": "2026-09-28T20:40:45.502912+00:00",
+   "attempt_at": "2026-09-28T20:40:45.502912+00:00",
    "error": null
   }
  },
@@ -184,10 +184,10 @@
  },
  "prices": {
   "^TNX": 5.24,
-  "DX-Y.NYB": 101.197,
-  "CL=F": 93.08,
-  "GC=F": 4165.7998,
-  "^VIX": 16.05
+  "DX-Y.NYB": 101.196,
+  "CL=F": 93.28,
+  "GC=F": 4150.7998,
+  "^VIX": 16.07
  },
  "history": {
   "^TNX": {
@@ -559,7 +559,7 @@
     101.1,
     101.29,
     100.97,
-    101.197
+    101.196
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     92.16,
     94.61,
     92.41,
-    93.08
+    93.28
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4318.3999,
     4298.0,
     4321.2002,
-    4165.7998
+    4150.7998
    ]
   },
   "^VIX": {
@@ -1117,7 +1117,7 @@
     15.18,
     15.67,
     14.87,
-    16.05
+    16.07
    ]
   }
  },
@@ -1162,15 +1162,15 @@
  "news": [
   {
    "date": "2026-09-28",
-   "title": "Are investors still confident the Fed can tame inflation as yields sell off further?",
-   "publisher": "Yahoo Finance Video",
-   "url": "https://finance.yahoo.com/video/investors-still-confident-fed-tame-141537544.html"
+   "title": "Stock market today: Dow, S&P 500, Nasdaq fall as Treasury yields continue to climb",
+   "publisher": "Yahoo Finance",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-monday-september-28-dow-sp-500-nasdaq-080420627.html"
   },
   {
    "date": "2026-09-28",
-   "title": "Why diesel price and Treasury yield relief would be huge wins for stocks",
-   "publisher": "Yahoo Finance",
-   "url": "https://finance.yahoo.com/markets/article/why-diesel-price-and-treasury-yield-relief-would-be-huge-wins-for-stocks-123039493.html"
+   "title": "Update: US Equity Indexes Fall as Iran Talks Stall, Fed Governor Points to Higher Rates, Inflation",
+   "publisher": "MT Newswires",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/us-equity-indexes-fall-iran-202125640.html"
   }
  ],
  "errors": []
