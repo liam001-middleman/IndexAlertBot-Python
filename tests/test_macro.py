@@ -137,6 +137,30 @@ def test_save_snapshot_sets_fetched_at_and_is_readable(tmp_path):
     assert not (tmp_path / "macro_snapshot.json.tmp").exists()  # 暫存檔已置換
 
 
+def test_snapshot_reload_keeps_fed_funds_changed_at(tmp_path):
+    """回歸：政策利率調整日是文字欄位，存檔→讀檔不可被數值過濾吃掉（曾被吃掉→只剩「日前」）。"""
+    path = tmp_path / "macro_snapshot.json"
+    save_snapshot(MacroSnapshot(rates={"fed_funds_upper": 4.0, "fed_funds_prev": 3.75,
+                                       "fed_funds_changed_at": "2026-09-16"}), path)
+    restored = load_snapshot(path)
+    assert restored.rates["fed_funds_changed_at"] == "2026-09-16"
+    assert restored.rates["fed_funds_upper"] == 4.0
+
+
+def test_build_macro_lines_keeps_fed_change_date_after_reload(tmp_path):
+    """回歸：讀檔後的 snapshot 仍要顯示調整日，而不是「日前」。"""
+    path = tmp_path / "macro_snapshot.json"
+    snapshot = MacroSnapshot(
+        sections={"fred": {"ok": True, "at": "2026-09-28T02:00:00+00:00"}},
+        rates={"fed_funds_lower": 3.75, "fed_funds_upper": 4.0, "fed_funds_prev": 3.75,
+               "fed_funds_changed_at": "2026-09-16"},
+    )
+    save_snapshot(snapshot, path)
+    text = "\n".join(build_macro_lines(load_snapshot(path)))
+    assert "Fed 政策利率 3.75~4.00%（2026-09-16 升息 1 碼）" in text
+    assert "日前" not in text
+
+
 def test_is_fresh_respects_ttl_and_missing_section():
     snapshot = MacroSnapshot(sections={"bls": {"ok": True, "at": macro_module._now_iso()}})
     assert snapshot.is_fresh("bls", ttl_hours=24) is True
@@ -254,6 +278,27 @@ def test_refresh_snapshot_price_symbols_fall_back_to_defaults(monkeypatch):
 def test_snapshot_from_dict_ignores_bad_numeric_values():
     restored = MacroSnapshot.from_dict({"rates": {"dgs10": "abc", "dxy": 100.5}})
     assert restored.rates == {"dxy": 100.5}
+
+
+def test_snapshot_from_dict_keeps_text_rate_keys_but_drops_empty():
+    restored = MacroSnapshot.from_dict({"rates": {
+        "dgs10": 4.12,
+        "fed_funds_changed_at": "2026-09-16",   # 文字欄位（政策利率調整日）必須保留
+        "fed_funds_prev": "",                   # 空字串仍視為無效值
+    }})
+    assert restored.rates == {"dgs10": 4.12, "fed_funds_changed_at": "2026-09-16"}
+    assert MacroSnapshot.from_dict({"rates": {"fed_funds_changed_at": "  "}}).rates == {}
+
+
+def test_point_period_is_normalized_to_year_month():
+    assert build_point("pce", [("2026-06-01", 130.0), ("2026-07-01", 131.0)]).period == "2026-07"
+    assert build_point("cpi", [("2026-07", 300.0), ("2026-08", 301.0)]).period == "2026-08"  # BLS 原樣
+    daily = build_point("inflation_expect_10y", [("2026-09-24", 2.30), ("2026-09-25", 2.34)])
+    assert daily.period == "2026-09-25"                                                      # 日頻原樣
+    # 舊快照（期別還是 FRED 的 YYYY-MM-01）讀檔時一併修正
+    legacy = MacroSnapshot.from_dict({"monthly": {"pce": {
+        "key": "pce", "label": "PCE 物價", "period": "2026-07-01", "value": 131.6}}})
+    assert legacy.monthly["pce"].period == "2026-07"
 
 
 def test_history_change_uses_window():

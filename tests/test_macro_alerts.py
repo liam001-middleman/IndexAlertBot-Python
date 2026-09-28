@@ -2,7 +2,7 @@
 import pytest
 
 from src.config import MacroConfig
-from src.macro import MacroPoint, MacroSnapshot
+from src.macro import MacroPoint, MacroSnapshot, load_snapshot, save_snapshot
 from src.macro_alerts import (MACRO_STATE_SYMBOL, evaluate_macro_conditions,
                               format_macro_alert_lines, get_new_macro_alerts)
 from src.state import StateStore
@@ -103,6 +103,30 @@ def test_rate_rules_include_surge_drop_and_fed_change():
     conditions = evaluate_macro_conditions(falling, make_cfg())
     assert find(conditions, "us10y_drop")["triggered"] is True
     assert find(conditions, "us10y_surge")["triggered"] is False
+
+
+def test_fed_rate_change_detail_keeps_change_date_after_snapshot_reload(tmp_path):
+    """回歸：快照存檔→讀檔後，警報仍要帶出調整日（曾被數值過濾吃掉→顯示「未標示」）。"""
+    path = tmp_path / "macro_snapshot.json"
+    save_snapshot(make_snapshot(rates={
+        "fed_funds_lower": 3.75, "fed_funds_upper": 4.0, "fed_funds_prev": 3.75,
+        "fed_funds_changed_at": "2026-09-17",
+    }), path)
+    fed = find(evaluate_macro_conditions(load_snapshot(path), make_cfg()), "fed_rate_change")
+    assert fed["triggered"] is True
+    assert "調整日 2026-09-17" in fed["detail"]
+
+
+def test_alert_detail_uses_normalized_period_for_legacy_snapshot():
+    """舊快照的期別是 FRED 的 YYYY-MM-01，讀檔後警報文字應顯示 YYYY-MM。"""
+    snapshot = MacroSnapshot.from_dict({"monthly": {"pce": {
+        "key": "pce", "label": "PCE 物價", "unit": "%", "period": "2026-07-01",
+        "value": 131.6, "yoy": 3.9,
+    }}})
+    pce = find(evaluate_macro_conditions(snapshot, make_cfg()), "pce_yoy_high")
+    assert pce["triggered"] is True
+    assert "資料期別 2026-07" in pce["detail"]
+    assert "2026-07-01" not in pce["detail"]
 
 
 def test_market_rules_use_saved_history():

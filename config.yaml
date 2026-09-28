@@ -176,6 +176,14 @@ macro:
     - "關稅"
     - "降息"
     - "升息"
+    # 市場類（Yahoo 新聞標題是英文，故用英文詞）：讓「市場新聞」段落不會常常空白。
+    # 詞彙太寬（例如 market）幾乎全命中會變噪音，請保持具體。
+    - "oil"
+    - "crude"
+    - "yield"
+    - "Treasury"
+    - "payroll"
+    - "jobs report"
   risk_weights:
     technical: 0.6            # 風險分數 = 0.6×技術面 + 0.4×總體面（未經回測，僅相對排序參考）
     macro: 0.4

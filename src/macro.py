@@ -40,6 +40,10 @@ NEWS_LIMIT = 4             # 新聞最多保留筆數
 # 預設的總體價格代號（config.yaml 的 macro.price_symbols 有設定時以該清單為準）
 DEFAULT_MACRO_SYMBOLS = ["^TNX", "DX-Y.NYB", "CL=F", "GC=F", "^VIX"]
 
+# rates 內允許「非數值」的欄位（例如政策利率調整日 YYYY-MM-DD）：
+# 讀檔時的數值過濾不可把它們吃掉，否則報告只剩「日前／未標示」。
+TEXT_RATE_KEYS = ("fed_funds_changed_at",)
+
 # 報告文字用的標籤
 MONTHLY_LABELS = {
     "cpi": ("CPI", "%"),
@@ -89,6 +93,16 @@ def _pct_change(value: Optional[float], base: Optional[float]) -> Optional[float
     return (value - base) / base * 100.0
 
 
+def _normalize_period(period) -> str:
+    """統一資料期別為 YYYY-MM。
+
+    FRED 月資料的期別是「月初日」（YYYY-MM-01），報告若要顯示 〔2026-07-01〕 很囉唆；
+    BLS 本來就是 YYYY-MM，日頻序列（如 T10YIE）不是 -01 結尾，一律原樣保留。
+    """
+    text = str(period or "")
+    return text[:7] if len(text) >= 10 and text.endswith("-01") else text
+
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -128,6 +142,10 @@ class MacroPoint:
     change: Optional[float] = None                    # 對前一期水準差（原始單位）
     prev_change: Optional[float] = None               # 前一期的水準差
     change_3m: Optional[float] = None                 # 對 3 期前的水準差
+
+    def __post_init__(self) -> None:
+        # 期別一律正規化：新抓的資料存檔前就清乾淨，讀舊快照（含 YYYY-MM-01）也一併修正
+        self.period = _normalize_period(self.period)
 
     def to_dict(self) -> dict:
         return {
@@ -247,7 +265,8 @@ class MacroSnapshot:
             fetched_at=str(raw.get("fetched_at", "")),
             sections=raw.get("sections") or {},
             monthly=monthly,
-            rates={k: v for k, v in (raw.get("rates") or {}).items() if _to_float(v) is not None},
+            rates={k: v for k, v in (raw.get("rates") or {}).items()
+                   if _to_float(v) is not None or (k in TEXT_RATE_KEYS and str(v or "").strip())},
             prices={k: v for k, v in (raw.get("prices") or {}).items() if _to_float(v) is not None},
             history=raw.get("history") or {},
             events=raw.get("events") or [],
