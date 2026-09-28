@@ -42,3 +42,17 @@ class Alert:
     last_report_price: Optional[float] = None  # 上次出報告時的價格（報告比較用）
     last_report_at: Optional[str] = None  # 上次出報告時間（ISO 字串）
     triggered_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class MacroAlert:
+    """一則「新觸發」的總體經濟警報（來源是 macro 快照，不是單一行情標的）。"""
+
+    key: str  # 規則代號，例如 cpi_yoy_high
+    alert_name: str  # 人類可讀名稱，例如「CPI 年增偏高」
+    severity: str  # critical / warning / info
+    message: str  # 單行摘要
+    detail: str  # 詳細說明（含數值）
+    value: float
+    threshold: float
+    triggered_at: datetime = field(default_factory=datetime.utcnow)

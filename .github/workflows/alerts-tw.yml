@@ -58,7 +58,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TZ: 'Asia/Taipei'
-        run: python main.py --market tw --state alert_state_tw.json
+        # TW workflow 只讀取 US workflow 產生的 macro_snapshot.json（--macro-readonly）：
+        # 不連網抓總體資料、不寫檔，避免與 US workflow 搶寫同一個檔案
+        run: python main.py --market tw --macro-readonly --state alert_state_tw.json
 
       - name: Commit alert state
         if: always()

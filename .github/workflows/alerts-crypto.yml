@@ -57,7 +57,8 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TZ: 'Asia/Taipei'
-        run: python main.py --market crypto --state alert_state_crypto.json
+        # Crypto workflow 只讀取 US workflow 產生的 macro_snapshot.json（--macro-readonly）
+        run: python main.py --market crypto --macro-readonly --state alert_state_crypto.json
 
       - name: Commit alert state
         if: always()

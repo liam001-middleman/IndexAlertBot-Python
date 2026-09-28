@@ -71,6 +71,25 @@ assets:
     source_symbol: "ETH-USD"
     convert_to_twd: true
 
+  # --- 總體經濟指標（market: macro）---
+  # 這些標的走一般 yfinance 抓價流程，警報由 US workflow（--market us,macro）產出；
+  # TW / Crypto workflow 只讀取 macro_snapshot.json（--macro-readonly），避免重複通知。
+  - symbol: "^TNX"
+    name: "美10年期殖利率"
+    market: "macro"
+  - symbol: "DX-Y.NYB"
+    name: "美元指數"
+    market: "macro"
+  - symbol: "CL=F"
+    name: "西德州原油"
+    market: "macro"
+  - symbol: "GC=F"
+    name: "黃金"
+    market: "macro"
+  - symbol: "^VIX"
+    name: "VIX 恐慌指數"
+    market: "macro"
+
 # 警報門檻：defaults 為所有市場的預設值
 # overrides 可依 market（us / tw / crypto）覆寫
 alerts:
@@ -89,6 +108,12 @@ alerts:
       ma_deviation_pct: 5.0      # crypto: same as default threshold
     tw:
       intraday_change_pct: 6.0
+    macro:
+      # macro 資產（殖利率／美元／原油／黃金／VIX）的波動與個股不同，門檻另訂
+      rsi_overbought: 75
+      rsi_oversold: 25
+      intraday_change_pct: 3.0
+      ma_deviation_pct: 8.0
 
 # 抓取的歷史資料期間（供 RSI / MA 計算）
 history:
@@ -104,3 +129,67 @@ deepseek:
 # parse_mode 留空 = 純文字；若要富文字可設 "HTML"
 telegram:
   parse_mode: ""
+
+# 報告輸出
+#   style: intuitive = 白話三段式（預設，給不想看指標的人）
+#          technical = 指標報表（原始格式，方便逐項核對數值）
+#   include_raw_appendix: 報告末端附上「程式產生」的原始數據區塊（數字不經 AI，保證正確）
+report:
+  style: "intuitive"
+  include_raw_appendix: true
+  max_chars: 1800          # 只寫進 prompt 當長度指引（Telegram 單則上限由 notifier 處理）
+
+# 總體經濟指標（Macro 層）
+#   BLS  ：物價（CPI／核心 CPI）與就業（非農／失業率／時薪），免金鑰
+#   FRED ：PCE／核心 PCE／政策利率／通膨預期，需環境變數 FRED_API_KEY（未設定則自動略過）
+#   Fed  ：FOMC 聲明與官員談話 RSS，免金鑰
+macro:
+  enabled: true
+  cache_file: "macro_snapshot.json"
+  monthly_ttl_hours: 24     # 月度統計（BLS / FRED）快取有效期（小時）
+  market_ttl_hours: 1       # 市場價格與 Fed RSS 快取有效期（小時）
+  bls_series:
+    cpi: "CUUR0000SA0"               # CPI-U 全項目（未季調）
+    core_cpi: "CUUR0000SA0L1E"       # 核心 CPI
+    nfp: "CES0000000001"             # 非農就業總人數（季調）
+    unemployment_rate: "LNS14000000" # 失業率（季調）
+    avg_hourly_earnings: "CES0500000003"  # 平均時薪（季調）
+  fred_series:
+    pce: "PCEPI"
+    core_pce: "PCEPILFE"
+    fed_funds_upper: "DFEDTARU"
+    fed_funds_lower: "DFEDTARL"
+    dgs10: "DGS10"
+    inflation_expect_10y: "T10YIE"
+    inflation_expect_1y: "EXPINF1YR"
+  thresholds:
+    cpi_yoy_high: 3.0         # CPI 年增率示警門檻（%）
+    core_cpi_yoy_high: 3.0    # 核心 CPI 年增率示警門檻（%）
+    cpi_mom_accel_pp: 0.2     # 月增率比前月加速幾個百分點才示警
+    pce_yoy_high: 2.5         # PCE 年增率示警門檻（%）
+    us10y_bp_20d: 40.0        # 10Y 殖利率 20 日變動（bp）
+    dxy_pct_20d: 2.0          # 美元指數 20 日漲跌幅（%）
+    wti_pct_20d: 10.0         # WTI 原油 20 日漲跌幅（%）
+    unrate_jump_pp: 0.3       # 失業率 3 個月內上升幅度（百分點）
+    wage_yoy_high: 4.0        # 平均時薪年增率示警門檻（%）
+    correlation_min_abs: 0.3  # |r| 低於此值不得聲稱「背離」
+  correlation_windows: [20, 60]
+  news_keywords:
+    - "Fed"
+    - "FOMC"
+    - "inflation"
+    - "CPI"
+    - "PCE"
+    - "rate cut"
+    - "rate hike"
+    - "tariff"
+    - "recession"
+    - "利率"
+    - "通膨"
+    - "關稅"
+    - "降息"
+    - "升息"
+  risk_weights:
+    technical: 0.6            # 風險分數 = 0.6×技術面 + 0.4×總體面（未經回測，僅相對排序參考）
+    macro: 0.4
+
