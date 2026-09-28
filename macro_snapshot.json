@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-09-28T13:10:49.127905+00:00",
+ "fetched_at": "2026-09-28T14:15:41.082606+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-09-28T13:10:48.558391+00:00",
-   "attempt_at": "2026-09-28T13:10:48.558391+00:00",
+   "at": "2026-09-28T14:15:40.718540+00:00",
+   "attempt_at": "2026-09-28T14:15:40.718540+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-09-28T13:10:48.874769+00:00",
-   "attempt_at": "2026-09-28T13:10:48.874769+00:00",
+   "at": "2026-09-28T14:15:40.856259+00:00",
+   "attempt_at": "2026-09-28T14:15:40.856259+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-09-28T13:10:49.127813+00:00",
-   "attempt_at": "2026-09-28T13:10:49.127813+00:00",
+   "at": "2026-09-28T14:15:41.082518+00:00",
+   "attempt_at": "2026-09-28T14:15:41.082518+00:00",
    "error": null
   }
  },
@@ -183,11 +183,11 @@
   "fed_funds_changed_at": "2026-09-16"
  },
  "prices": {
-  "^TNX": 5.213,
-  "DX-Y.NYB": 101.179,
-  "CL=F": 94.56,
-  "GC=F": 4180.6001,
-  "^VIX": 16.01
+  "^TNX": 5.217,
+  "DX-Y.NYB": 101.197,
+  "CL=F": 94.12,
+  "GC=F": 4177.2002,
+  "^VIX": 15.84
  },
  "history": {
   "^TNX": {
@@ -373,7 +373,7 @@
     5.114,
     5.162,
     5.184,
-    5.213
+    5.217
    ]
   },
   "DX-Y.NYB": {
@@ -559,7 +559,7 @@
     101.1,
     101.29,
     100.97,
-    101.179
+    101.197
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     92.16,
     94.61,
     92.41,
-    94.56
+    94.12
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4318.3999,
     4298.0,
     4321.2002,
-    4180.6001
+    4177.2002
    ]
   },
   "^VIX": {
@@ -1117,7 +1117,7 @@
     15.18,
     15.67,
     14.87,
-    16.01
+    15.84
    ]
   }
  },
@@ -1162,9 +1162,15 @@
  "news": [
   {
    "date": "2026-09-28",
-   "title": "Why diesel price and Treasury yield relief would be huge wins for stocks",
-   "publisher": "Yahoo Finance",
-   "url": "https://finance.yahoo.com/markets/article/why-diesel-price-and-treasury-yield-relief-would-be-huge-wins-for-stocks-123039493.html"
+   "title": "Dow Slips Over 350 Points, Nasdaq And S&P 500 Also In The Red As Treasury Yields, Crude Oil Prices Rise",
+   "publisher": "Stocktwits",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/dow-slips-over-350-points-135434589.html"
+  },
+  {
+   "date": "2026-09-28",
+   "title": "Dow drops 377 points as oil prices and Treasury yields rise",
+   "publisher": "Quartz",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/dow-drops-377-points-oil-135312726.html"
   },
   {
    "date": "2026-09-28",
@@ -1174,9 +1180,9 @@
   },
   {
    "date": "2026-09-28",
-   "title": "Update: US Equity Futures Drop Pre-Bell as Oil Prices Rise Amid US Rejection of Iran's Proposal to Reopen Strait of Hormuz",
-   "publisher": "MT Newswires",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/us-equity-futures-drop-pre-124651902.html"
+   "title": "Wall St opens lower as oil spikes after Trump rejects Iran peace proposal",
+   "publisher": "Reuters",
+   "url": "https://finance.yahoo.com/energy/articles/wall-st-opens-lower-oil-133527591.html"
   }
  ],
  "errors": []
