@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-09-28T21:45:45.577877+00:00",
+ "fetched_at": "2026-09-28T23:59:12.284440+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-09-28T21:45:45.161189+00:00",
-   "attempt_at": "2026-09-28T21:45:45.161189+00:00",
+   "at": "2026-09-28T23:59:11.876012+00:00",
+   "attempt_at": "2026-09-28T23:59:11.876012+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-09-28T21:45:45.399324+00:00",
-   "attempt_at": "2026-09-28T21:45:45.399324+00:00",
+   "at": "2026-09-28T23:59:12.058655+00:00",
+   "attempt_at": "2026-09-28T23:59:12.058655+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-09-28T21:45:45.577791+00:00",
-   "attempt_at": "2026-09-28T21:45:45.577791+00:00",
+   "at": "2026-09-28T23:59:12.284357+00:00",
+   "attempt_at": "2026-09-28T23:59:12.284357+00:00",
    "error": null
   }
  },
@@ -184,9 +184,9 @@
  },
  "prices": {
   "^TNX": 5.24,
-  "DX-Y.NYB": 101.193,
-  "CL=F": 93.29,
-  "GC=F": 4148.5,
+  "DX-Y.NYB": 101.19,
+  "CL=F": 93.23,
+  "GC=F": 4154.7002,
   "^VIX": 16.07
  },
  "history": {
@@ -559,7 +559,7 @@
     101.1,
     101.29,
     100.97,
-    101.193
+    101.19
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     92.16,
     94.61,
     92.41,
-    93.29
+    93.23
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4318.3999,
     4298.0,
     4321.2002,
-    4148.5
+    4154.7002
    ]
   },
   "^VIX": {
@@ -1168,9 +1168,9 @@
   },
   {
    "date": "2026-09-28",
-   "title": "U.S. Stocks Slide as Treasury Selloff Deepens",
-   "publisher": "The Wall Street Journal",
-   "url": ""
+   "title": "S&P 500, Dow, Nasdaq Drop Under Pressure From Elevated Yields As Investors Shrug Off Trump’s Iran Sanction Relief — NVDA, BA, AMD, NVTS, CBRS In Focus",
+   "publisher": "Stocktwits",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/p-500-dow-nasdaq-drop-230758863.html"
   }
  ],
  "errors": []
