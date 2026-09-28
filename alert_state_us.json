@@ -6,9 +6,9 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 3.0315200679901917,
-      "triggered_at": "2026-09-25T17:00:57.850126+00:00"
+      "status": "active",
+      "last_value": 3.544064478329318,
+      "triggered_at": "2026-09-28T13:01:00.451779+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "active",
@@ -16,8 +16,8 @@
       "triggered_at": "2026-09-10T16:35:42.933716+00:00"
     },
     "__last_report__": {
-      "price": 339.2900085449219,
-      "at": "2026-09-25T17:01:01.084235+00:00"
+      "price": 341.07000732421875,
+      "at": "2026-09-28T13:01:04.054101+00:00"
     }
   },
   "TSLA": {
@@ -294,9 +294,9 @@
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
     "fed_rate_change": {
-      "status": "clear",
+      "status": "active",
       "last_value": 4.0,
-      "triggered_at": "2026-09-28T12:08:00.286119+00:00"
+      "triggered_at": "2026-09-28T13:01:00.452202+00:00"
     },
     "wti_surge": {
       "status": "active",
