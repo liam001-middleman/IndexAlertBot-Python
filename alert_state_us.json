@@ -289,7 +289,7 @@
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
     "us10y_surge": {
-      "status": "active",
+      "status": "clear",
       "last_value": 52.0,
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
