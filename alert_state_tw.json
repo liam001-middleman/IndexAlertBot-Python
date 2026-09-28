@@ -127,8 +127,8 @@
       "at": "2026-09-25T01:01:04.965922+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 72.90682264795474,
+      "status": "clear",
+      "last_value": 67.5821116632651,
       "triggered_at": "2026-09-25T01:01:02.106770+00:00"
     }
   },
