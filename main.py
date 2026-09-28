@@ -5,12 +5,13 @@
       （技術面 + 總體）→ 比對狀態（只留新觸發）→ DeepSeek 生成中文報告
       → Telegram 發送 → 儲存狀態。
 
-總體快照（macro_snapshot.json）由「擁有快照的市場」負責更新；其餘 workflow
-一律加 --macro-readonly 只讀既有快照，避免重複抓取與重複通知。
+總體快照（macro_snapshot.json）由 Alerts - US Stocks workflow 負責更新（它刻意
+不加 --macro-readonly）；其餘 workflow 一律加 --macro-readonly 只讀既有快照，
+避免重複抓取與重複通知。
 
 用法：
     python main.py                 # 正式執行（全部市場，僅建議本機測試）
-    python main.py --market us,macro     # US workflow：行情 + 總體（更新快照）
+    python main.py --market us     # US workflow：行情 + 更新總體快照（不帶 --macro-readonly）
     python main.py --market tw --macro-readonly    # TW workflow：只讀總體快照
     python main.py --dry-run       # 預覽：抓資料與警報，但不發送、不更新狀態
 """
@@ -138,8 +139,8 @@ def main() -> int:
     # 0. 總體快照：依 TTL 只重抓過期區塊；readonly 模式完全不連網也不寫檔
     macro_path = Path(args.macro_file) if args.macro_file else ROOT_DIR / cfg.macro.cache_file
     existing_snapshot = load_snapshot(macro_path)
-    # 快照要抓的價格標的以 config.yaml 的 market: macro 資產為準（讀不到時用模組預設清單）
-    macro_symbols = [a.symbol for a in cfg.assets if a.market == "macro"]
+    # 快照要抓的價格標的來自 config.yaml 的 macro.price_symbols（留空時由 src/macro.py 用預設清單）
+    macro_symbols = list(cfg.macro.price_symbols)
     snapshot = refresh_snapshot(cfg.macro, existing_snapshot, readonly=args.macro_readonly,
                                 force=args.macro_force, price_symbols=macro_symbols)
     if args.macro_readonly and existing_snapshot is None:
@@ -167,6 +168,7 @@ def main() -> int:
             )
             quote = build_quote(asset, md, cfg.alert_config_for(asset.market))
             quotes.append(quote)
+            # 總體資產（若有人自行加回 assets）不列入相關性計算的「資產」側，只當因子
             if cfg.macro.enabled and asset.market != "macro":
                 history = history_from_frame(md.df)
                 if history:

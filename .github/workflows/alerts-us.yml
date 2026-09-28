@@ -60,8 +60,9 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           TZ: 'Asia/Taipei'
-        # US 同時負責更新總體經濟快照（macro_snapshot.json），TW / Crypto 只讀取
-        run: python main.py --market us,macro --state alert_state_us.json
+        # US 負責更新總體經濟快照（macro_snapshot.json）：這裡刻意「不加」--macro-readonly；
+        # TW / Crypto workflow 則以 --macro-readonly 只讀既有快照
+        run: python main.py --market us --state alert_state_us.json
 
       - name: Commit alert state and macro snapshot
         if: always()

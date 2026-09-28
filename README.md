@@ -17,8 +17,8 @@
 | `Alerts - TW Stocks` | 每 5 分鐘 | 週一~五 01:00–05:55（= 台灣 09:00–13:55） | `alert_state_tw.json` |
 | `Alerts - US Stocks` | 每 5 分鐘 | 週一~五 13:00–20:55（涵蓋冬夏令，DST 邊界 ±30~60 分） | `alert_state_us.json` |
 
-> **總體快照只有一個寫入者**：`macro_snapshot.json` 由 `Alerts - US Stocks`（`--market us,macro`）
-> 負責更新與 commit；TW / Crypto 以 `--macro-readonly` **唯讀**取用（不連網、不寫檔），
+> **總體快照只有一個寫入者**：`macro_snapshot.json` 由 `Alerts - US Stocks`（`--market us`，
+> **刻意不加** `--macro-readonly`）負責更新與 commit；TW / Crypto 以 `--macro-readonly` **唯讀**取用（不連網、不寫檔），
 > 避免三個排程互搶同一個檔案、也避免同一則總體警報被通知三次。
 > 第一次執行前檔案還不存在，那個回合的報告只會暫時缺少總體脈絡。
 
@@ -42,6 +42,8 @@
   - Fed RSS：FOMC 聲明與官員談話標題；Yahoo 新聞：關鍵字過濾（Fed／通膨／關稅…）
   - 快照 `macro_snapshot.json` 以**區塊為單位**快取（月度 24h／市場 1h TTL），
     個別區塊抓取失敗會保留上次成功資料並記錄原因，下回合自動重試
+  - 總體價格（`^TNX`／`DX-Y.NYB`／`CL=F`／`GC=F`／`^VIX`）是**資料來源，不是追蹤標的**：
+    設定在 `config.yaml` 的 `macro.price_symbols`，**不會**出現在報告的標的清單、也不會產生個股式的技術面警報
 - 總體警報（`src/macro_alerts.py`）：CPI／核心 CPI 年增過高、CPI 月增加速、PCE 年增過高、
   10Y 殖利率 20 日急升/急降、美元急升、原油急漲、失業率 3 個月跳升、時薪年增過高；
   同樣只通知**新觸發**（與技術面共用邏輯，狀態同樣記在狀態檔）
@@ -115,11 +117,11 @@ python main.py --dry-run
 # 只處理指定市場（依市場分流，與 GitHub Actions 排程對應）
 python main.py --market crypto --state alert_state_crypto.json
 python main.py --market tw --state alert_state_tw.json
-# US workflow 同時更新總體快照（--market us,macro）
-python main.py --market us,macro --state alert_state_us.json
+# US workflow 同時更新總體快照（--market us，刻意不加 --macro-readonly）
+python main.py --market us --state alert_state_us.json
 
 # 總體相關的參數
-python main.py --market us,macro --dry-run --macro-force       # 忽略 TTL 強制重抓總體資料
+python main.py --market us --dry-run --macro-force             # 忽略 TTL 強制重抓總體資料
 python main.py --market tw --macro-readonly --dry-run          # 只讀既有總體快照（不連網、不寫檔）
 python main.py --market us --macro-file tmp_snapshot.json      # 指定快照檔路徑（測試用）
 
@@ -135,14 +137,14 @@ python main.py
 
 | 區塊 | 說明 |
 |---|---|
-| `assets` | 追蹤標的（symbol / name / market）。market 為 `us`、`tw`、`crypto` 或 `macro`。`provider` 預設 `yahoo`；加密貨幣台幣報價設 `max`，symbol 用 MAX 交易對（如 `btctwd`） |
+| `assets` | 追蹤標的（symbol / name / market）。market 只能是 `us`、`tw`、`crypto`（總體資產請設在 `macro.price_symbols`，不要放這裡）。`provider` 預設 `yahoo`；加密貨幣台幣報價設 `max`，symbol 用 MAX 交易對（如 `btctwd`） |
 | `alerts.defaults` | 所有市場共用的警報門檻 |
-| `alerts.overrides` | 依 market 覆寫門檻（例如 crypto 波動大，門檻放寬；`macro` 資產另訂 RSI／乖離門檻） |
+| `alerts.overrides` | 依 market 覆寫門檻（例如 crypto 波動大，門檻放寬；`us` 的 MA 乖離門檻 3.0%） |
 | `history` | yfinance 抓取期間（預設 2 年日線，供 RSI/MA 計算） |
 | `deepseek` | base_url 與 model（api_key 走環境變數） |
 | `telegram` | parse_mode（留空 = 純文字） |
 | `report` | 報告樣式（`intuitive` / `technical`）、是否附程式產生的原始數據、長度指引 |
-| `macro` | 總體層設定：`enabled`、快照檔名、月度／市場 TTL、BLS／FRED 序列代號、總體警報門檻、相關窗口與 `risk_weights`（詳見 `config.yaml` 註解） |
+| `macro` | 總體層設定：`enabled`、快照檔名、月度／市場 TTL、`price_symbols`（總體價格代號，只是資料來源）、BLS／FRED 序列代號、總體警報門檻、相關窗口與 `risk_weights`（詳見 `config.yaml` 註解） |
 
 > `macro` 區塊完整註解在 `config.yaml`（`thresholds` 每一項都有中文說明）。
 > `macro.enabled: false` 時**完全不連網、不抓總體資料，也不會產生總體警報**；
@@ -250,7 +252,7 @@ gitleaks dir . --config .gitleaks.toml --redact --no-banner -v                  
 ```
 GitHub Actions（三個獨立排程，每 5 分鐘，依市場分流）
   → python main.py --market {crypto|tw|us} [--macro-readonly] --state alert_state_{market}.json
-      （US 為 --market us,macro，負責更新 macro_snapshot.json）
+      （US 不加 --macro-readonly，負責更新 macro_snapshot.json）
       → 載入 config + 環境變數
       → 總體快照：依 TTL 只重抓過期區塊（BLS / FRED / Yahoo 價格 / Fed RSS / 新聞）
           → 沒 FRED 金鑰就略過該區塊；FRED 缺值時用 ^TNX 推算 10Y 殖利率
@@ -283,7 +285,7 @@ GitHub Actions（三個獨立排程，每 5 分鐘，依市場分流）
   但條件解除後再次符合仍會重新通知（與技術面同一套邏輯）。
 - **唯讀市場的快照可能較舊**：TW / Crypto 讀的是 US workflow 上次 commit 的快照；
   美股時段外（UTC 21:00–13:00）US 不執行，市場區塊可能已超過 1h TTL，報告會照實標示資料時間，
-  不會假裝是最新。需要更即時就本機執行 `python main.py --market us,macro --dry-run --macro-force` 更新。
+  不會假裝是最新。需要更即時就本機執行 `python main.py --market us --dry-run --macro-force` 更新。
 - **FRED 為選用**：未設定 `FRED_API_KEY` 時 PCE／政策利率／通膨預期會缺席（報告會列在「本回合無法取得」），
   10Y 殖利率改用 Yahoo `^TNX` 日線推算，因此該欄位在無 FRED 時仍可用。
 - **相關性只是關聯**：相關係數高不代表因果，也可能隨時間改變；程式只在 |r| ≥ 門檻且樣本足夠時才輸出，

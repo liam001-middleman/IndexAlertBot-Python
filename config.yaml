@@ -4,7 +4,7 @@
 # 機密（API Key / Token / Chat ID）請放在環境變數，不要寫在這裡
 # ============================================================
 
-# 追蹤標的：
+# 追蹤標的（market 只能是 us / tw / crypto；總體經濟資產見下方 macro.price_symbols）：
 #   provider: yahoo（預設）→ symbol 需為 Yahoo Finance 代號
 #     美股：AAPL、TSLA；台股：2330.TW、2317.TW；加密貨幣：BTC-USD、ETH-USD
 #   provider: max → symbol 為 MAX 交易所交易對（加密貨幣台幣報價，免金鑰）
@@ -71,24 +71,9 @@ assets:
     source_symbol: "ETH-USD"
     convert_to_twd: true
 
-  # --- 總體經濟指標（market: macro）---
-  # 這些標的走一般 yfinance 抓價流程，警報由 US workflow（--market us,macro）產出；
-  # TW / Crypto workflow 只讀取 macro_snapshot.json（--macro-readonly），避免重複通知。
-  - symbol: "^TNX"
-    name: "美10年期殖利率"
-    market: "macro"
-  - symbol: "DX-Y.NYB"
-    name: "美元指數"
-    market: "macro"
-  - symbol: "CL=F"
-    name: "西德州原油"
-    market: "macro"
-  - symbol: "GC=F"
-    name: "黃金"
-    market: "macro"
-  - symbol: "^VIX"
-    name: "VIX 恐慌指數"
-    market: "macro"
+# 註：總體經濟資產（美 10 年期殖利率 / 美元指數 / WTI 原油 / 黃金 / VIX）
+# 不是「追蹤標的」，它們只是總體層的資料來源，設定在下方 macro.price_symbols；
+# 因此不會出現在報告的標的清單，也不會產生個股式的技術面警報。
 
 # 警報門檻：defaults 為所有市場的預設值
 # overrides 可依 market（us / tw / crypto）覆寫
@@ -108,12 +93,6 @@ alerts:
       ma_deviation_pct: 5.0      # crypto: same as default threshold
     tw:
       intraday_change_pct: 6.0
-    macro:
-      # macro 資產（殖利率／美元／原油／黃金／VIX）的波動與個股不同，門檻另訂
-      rsi_overbought: 75
-      rsi_oversold: 25
-      intraday_change_pct: 3.0
-      ma_deviation_pct: 8.0
 
 # 抓取的歷史資料期間（供 RSI / MA 計算）
 history:
@@ -146,6 +125,14 @@ report:
 macro:
   enabled: true
   cache_file: "macro_snapshot.json"
+  # 總體價格要抓的 Yahoo 代號（只是資料來源，不是追蹤標的；留空 = 用 src/macro.py 預設清單）
+  # 這些代號不會出現在報告的標的清單，也不會產生個股式技術面警報
+  price_symbols:
+    - "^TNX"        # 美 10 年期殖利率（FRED 未設定時的備援；市場段落會跳過重複項）
+    - "DX-Y.NYB"    # 美元指數
+    - "CL=F"        # WTI 原油
+    - "GC=F"        # 黃金
+    - "^VIX"        # VIX 恐慌指數
   monthly_ttl_hours: 24     # 月度統計（BLS / FRED）快取有效期（小時）
   market_ttl_hours: 1       # 市場價格與 Fed RSS 快取有效期（小時）
   bls_series:

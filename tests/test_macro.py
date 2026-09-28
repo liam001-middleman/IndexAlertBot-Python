@@ -228,6 +228,29 @@ def test_refresh_snapshot_skips_fresh_sections(monkeypatch):
     assert result.section_ok("bls") is True
 
 
+def test_refresh_snapshot_price_symbols_fall_back_to_defaults(monkeypatch):
+    """macro.price_symbols 留空（或未設定）時，價格區塊用 src/macro.py 的預設清單。"""
+    captured = []
+
+    def spy_prices(symbols, **kwargs):
+        captured.append(list(symbols))
+        return {}, {}
+
+    monkeypatch.setattr(macro_module, "fetch_macro_prices", spy_prices)
+    monkeypatch.setattr(macro_module, "fetch_bls_series", lambda series_ids, **kw: {})
+    monkeypatch.setattr(macro_module, "fetch_fred_series", lambda ids, key, **kw: {})
+    monkeypatch.setattr(macro_module, "fetch_fed_events", lambda **kw: [])
+    monkeypatch.setattr(macro_module, "fetch_macro_news", lambda keywords, **kw: [])
+
+    refresh_snapshot(MacroConfig(), MacroSnapshot(), force=True)                    # 未提供
+    refresh_snapshot(MacroConfig(), MacroSnapshot(), force=True, price_symbols=[])  # 空清單
+    refresh_snapshot(MacroConfig(), MacroSnapshot(), force=True, price_symbols=["^VIX"])
+
+    assert captured[0] == macro_module.DEFAULT_MACRO_SYMBOLS
+    assert captured[1] == macro_module.DEFAULT_MACRO_SYMBOLS
+    assert captured[2] == ["^VIX"]        # 有設定時以設定為準
+
+
 def test_snapshot_from_dict_ignores_bad_numeric_values():
     restored = MacroSnapshot.from_dict({"rates": {"dgs10": "abc", "dxy": 100.5}})
     assert restored.rates == {"dxy": 100.5}

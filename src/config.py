@@ -59,7 +59,7 @@ DEFAULT_NEWS_KEYWORDS = [
 class AssetConfig:
     symbol: str
     name: str
-    market: str  # us / tw / crypto
+    market: str  # us / tw / crypto（總體資產不放這裡，見 MacroConfig.price_symbols）
     provider: str = "yahoo"  # yahoo（Yahoo Finance） / max（MAX 交易所台幣報價）
     source_symbol: Optional[str] = None  # 實際抓取代號（如 BTC-USD）；None = 直接用 symbol
     convert_to_twd: bool = False  # True：抓 USD 日線並乘 USD/TWD 匯率換算成台幣
@@ -120,6 +120,7 @@ class MacroConfig:
     cache_file: str = "macro_snapshot.json"
     monthly_ttl_hours: int = 24
     market_ttl_hours: int = 1
+    price_symbols: list = field(default_factory=list)  # 總體價格代號（空 = 用 src/macro.py 的預設清單）
     fred_api_key: str = ""  # 環境變數 FRED_API_KEY（未設定時 FRED 系列自動略過）
     bls_series: dict = field(default_factory=lambda: dict(DEFAULT_BLS_SERIES))
     fred_series: dict = field(default_factory=lambda: dict(DEFAULT_FRED_SERIES))
@@ -242,6 +243,8 @@ def load_config(path: Optional[str] = None) -> Config:
             cache_file=str(macro_raw.get("cache_file", "macro_snapshot.json")),
             monthly_ttl_hours=int(macro_raw.get("monthly_ttl_hours", 24)),
             market_ttl_hours=int(macro_raw.get("market_ttl_hours", 1)),
+            price_symbols=[str(s).strip() for s in (macro_raw.get("price_symbols") or [])
+                           if str(s).strip()],
             fred_api_key=os.environ.get("FRED_API_KEY", "").strip(),
             bls_series=bls_series,
             fred_series=fred_series,

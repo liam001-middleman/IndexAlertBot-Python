@@ -37,7 +37,7 @@ SNAPSHOT_VERSION = 1
 HISTORY_DAYS = 90          # 快照保存的 macro 價格歷史天數（供相關性計算）
 NEWS_LIMIT = 4             # 新聞最多保留筆數
 
-# 預設的 macro 資產代號（config.yaml 的 assets 有 market: macro 時以該清單為準）
+# 預設的總體價格代號（config.yaml 的 macro.price_symbols 有設定時以該清單為準）
 DEFAULT_MACRO_SYMBOLS = ["^TNX", "DX-Y.NYB", "CL=F", "GC=F", "^VIX"]
 
 # 報告文字用的標籤
