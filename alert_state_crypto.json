@@ -66,8 +66,8 @@
       "triggered_at": "2026-09-02T08:40:35.153873+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.293847287968116,
+      "status": "clear",
+      "last_value": 4.748015661256526,
       "triggered_at": "2026-09-28T00:20:39.787116+00:00"
     },
     "intraday_surge": {
