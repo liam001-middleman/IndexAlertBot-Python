@@ -6,7 +6,7 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
+      "status": "clear",
       "last_value": 3.0315200679901917,
       "triggered_at": "2026-09-25T17:00:57.850126+00:00"
     },
@@ -294,7 +294,7 @@
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
     "fed_rate_change": {
-      "status": "active",
+      "status": "clear",
       "last_value": 4.0,
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
