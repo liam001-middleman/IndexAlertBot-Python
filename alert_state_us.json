@@ -299,8 +299,8 @@
       "triggered_at": "2026-09-28T13:01:00.452202+00:00"
     },
     "wti_surge": {
-      "status": "active",
-      "last_value": 14.808153477218223,
+      "status": "clear",
+      "last_value": 5.515391791044766,
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     }
   }
