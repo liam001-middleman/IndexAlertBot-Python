@@ -309,8 +309,8 @@
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
     "dxy_surge": {
-      "status": "active",
-      "last_value": 2.0064366891280105,
+      "status": "clear",
+      "last_value": 1.9722417781353752,
       "triggered_at": "2026-09-29T20:20:44.046650+00:00"
     }
   }
