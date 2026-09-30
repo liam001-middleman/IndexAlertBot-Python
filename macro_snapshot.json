@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-09-30T18:12:03.902751+00:00",
+ "fetched_at": "2026-09-30T22:12:57.042307+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-09-30T18:12:03.572680+00:00",
-   "attempt_at": "2026-09-30T18:12:03.572680+00:00",
+   "at": "2026-09-30T22:12:56.791495+00:00",
+   "attempt_at": "2026-09-30T22:12:56.791495+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-09-30T18:12:03.714607+00:00",
-   "attempt_at": "2026-09-30T18:12:03.714607+00:00",
+   "at": "2026-09-30T22:12:56.908621+00:00",
+   "attempt_at": "2026-09-30T22:12:56.908621+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-09-30T18:12:03.902665+00:00",
-   "attempt_at": "2026-09-30T18:12:03.902665+00:00",
+   "at": "2026-09-30T22:12:57.042221+00:00",
+   "attempt_at": "2026-09-30T22:12:57.042221+00:00",
    "error": null
   }
  },
@@ -183,11 +183,11 @@
   "fed_funds_changed_at": "2026-09-16"
  },
  "prices": {
-  "^TNX": 5.302,
-  "DX-Y.NYB": 101.421,
-  "CL=F": 90.7,
-  "GC=F": 4179.8999,
-  "^VIX": 15.82
+  "^TNX": 5.293,
+  "DX-Y.NYB": 101.463,
+  "CL=F": 90.36,
+  "GC=F": 4189.5,
+  "^VIX": 16.34
  },
  "history": {
   "^TNX": {
@@ -373,7 +373,7 @@
     5.184,
     5.24,
     5.255,
-    5.302
+    5.293
    ]
   },
   "DX-Y.NYB": {
@@ -559,7 +559,7 @@
     100.97,
     101.2,
     101.37,
-    101.421
+    101.463
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     92.41,
     92.6,
     89.38,
-    90.7
+    90.36
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4321.2002,
     4168.3999,
     4179.7002,
-    4179.8999
+    4189.5
    ]
   },
   "^VIX": {
@@ -1117,11 +1117,17 @@
     14.87,
     16.07,
     16.04,
-    15.82
+    16.34
    ]
   }
  },
  "events": [
+  {
+   "date": "2026-09-30",
+   "title": "Cook, The Dual Mandate in Rural America",
+   "url": "https://www.federalreserve.gov/newsevents/speech/cook20260930a.htm",
+   "source": "speeches"
+  },
   {
    "date": "2026-09-29",
    "title": "Waller, Payments in the Age of AI Agents",
@@ -1132,12 +1138,6 @@
    "date": "2026-09-29",
    "title": "Barr, Economic Conditions and Monetary Policy",
    "url": "https://www.federalreserve.gov/newsevents/speech/barr20260929a.htm",
-   "source": "speeches"
-  },
-  {
-   "date": "2026-09-29",
-   "title": "Bowman, Opening Remarks",
-   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20260929a.htm",
    "source": "speeches"
   },
   {
