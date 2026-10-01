@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-10-01T18:37:19.156505+00:00",
+ "fetched_at": "2026-10-01T22:53:17.747957+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-10-01T18:37:18.645613+00:00",
-   "attempt_at": "2026-10-01T18:37:18.645613+00:00",
+   "at": "2026-10-01T22:53:17.367106+00:00",
+   "attempt_at": "2026-10-01T22:53:17.367106+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-10-01T18:37:18.889067+00:00",
-   "attempt_at": "2026-10-01T18:37:18.889067+00:00",
+   "at": "2026-10-01T22:53:17.472261+00:00",
+   "attempt_at": "2026-10-01T22:53:17.472261+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-10-01T18:37:19.156417+00:00",
-   "attempt_at": "2026-10-01T18:37:19.156417+00:00",
+   "at": "2026-10-01T22:53:17.747854+00:00",
+   "attempt_at": "2026-10-01T22:53:17.747854+00:00",
    "error": null
   }
  },
@@ -184,10 +184,10 @@
  },
  "prices": {
   "^TNX": 5.237,
-  "DX-Y.NYB": 102.149,
-  "CL=F": 93.01,
-  "GC=F": 4203.3999,
-  "^VIX": 16.65
+  "DX-Y.NYB": 102.043,
+  "CL=F": 93.03,
+  "GC=F": 4205.3999,
+  "^VIX": 16.39
  },
  "history": {
   "^TNX": {
@@ -559,7 +559,7 @@
     101.2,
     101.37,
     101.45,
-    102.149
+    102.043
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     92.6,
     89.38,
     90.42,
-    93.01
+    93.03
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4168.3999,
     4179.7002,
     4186.7002,
-    4203.3999
+    4205.3999
    ]
   },
   "^VIX": {
@@ -1117,11 +1117,17 @@
     16.07,
     16.04,
     16.34,
-    16.65
+    16.39
    ]
   }
  },
  "events": [
+  {
+   "date": "2026-10-01",
+   "title": "Bowman, Modernizing Financial Regulation: Initial Observations from eSLR",
+   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20261001a.htm",
+   "source": "speeches"
+  },
   {
    "date": "2026-10-01",
    "title": "Jefferson, The U.S. Economy and Monetary Policy",
@@ -1132,12 +1138,6 @@
    "date": "2026-10-01",
    "title": "Waller, The Data Version of Godzilla versus Kong: FRED Takes on AI",
    "url": "https://www.federalreserve.gov/newsevents/speech/waller20261001a.htm",
-   "source": "speeches"
-  },
-  {
-   "date": "2026-09-30",
-   "title": "Cook, The Dual Mandate in Rural America",
-   "url": "https://www.federalreserve.gov/newsevents/speech/cook20260930a.htm",
    "source": "speeches"
   },
   {
