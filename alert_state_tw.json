@@ -15,8 +15,8 @@
   },
   "2327.TW": {
     "intraday_surge": {
-      "status": "active",
-      "last_value": 9.854014598540147,
+      "status": "clear",
+      "last_value": 3.9867109634551494,
       "triggered_at": "2026-10-01T06:44:43.656223+00:00"
     },
     "ma_deviation_neg_60": {
@@ -139,8 +139,8 @@
       "triggered_at": "2026-09-17T01:25:33.590257+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 7.377644814417712,
+      "status": "clear",
+      "last_value": 4.892549310657911,
       "triggered_at": "2026-09-21T01:01:05.925230+00:00"
     },
     "ma_deviation_pos_200": {
