@@ -22,8 +22,8 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.450304789623504,
+      "status": "clear",
+      "last_value": 1.568795287964644,
       "triggered_at": "2026-10-05T21:02:21.666367+00:00"
     },
     "ma_deviation_neg_200": {
@@ -258,13 +258,13 @@
       "triggered_at": "2026-09-28T14:45:41.087737+00:00"
     },
     "ma_deviation_pos_200": {
-      "status": "clear",
-      "last_value": 1.6432303309255338,
-      "triggered_at": "2026-10-01T18:37:20.960439+00:00"
+      "status": "active",
+      "last_value": 5.835429689232106,
+      "triggered_at": "2026-10-06T01:32:52.030758+00:00"
     },
     "__last_report__": {
-      "price": 10.569999694824219,
-      "at": "2026-10-02T18:07:01.502444+00:00"
+      "price": 10.600000381469727,
+      "at": "2026-10-06T01:32:56.008283+00:00"
     },
     "intraday_drop": {
       "status": "clear",
@@ -277,9 +277,9 @@
       "triggered_at": "2026-09-28T14:40:44.597743+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 0.38875834254229197,
-      "triggered_at": "2026-10-02T18:06:56.429604+00:00"
+      "status": "active",
+      "last_value": 3.943651758683006,
+      "triggered_at": "2026-10-06T01:32:52.030758+00:00"
     }
   },
   "MACRO": {
