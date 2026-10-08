@@ -1,7 +1,7 @@
 # IndexAlertBot-Python
 
 定時抓取美股、台股、加密貨幣的行情（Yahoo Finance + MAX 交易所台幣報價），計算 RSI 與 MA20/60/200，
-偵測「RSI 超買超賣」、「日內急漲急跌」、「乖離 MA」等警報；只對**新觸發**的警報通知，
+偵測「RSI 超買超賣」、「日內急漲急跌」、「乖離 MA」、「站上/跌破 MA」等警報；只對**新觸發**的警報通知，
 由 DeepSeek 整理成繁體中文報告，經 Telegram Bot 推送。排程由 GitHub Actions 執行，
 狀態檔會在每次執行後自動 commit 回 repo。
 
@@ -17,10 +17,86 @@
 | `Alerts - TW Stocks` | 每 5 分鐘 | 週一~五 01:00–05:55（= 台灣 09:00–13:55） | `alert_state_tw.json` |
 | `Alerts - US Stocks` | 每 5 分鐘 | 週一~五 13:00–20:55（涵蓋冬夏令，DST 邊界 ±30~60 分） | `alert_state_us.json` |
 
+> ⚠️ **原生 `schedule` 不可靠**：GitHub 的 `cron` 只是「盡力而為」，`*/5` 名目上一天
+> 288 次，實測常只有 **7~11 次**。因此三個 workflow 實際上由 **cron-job.org** 以外部
+> `workflow_dispatch` 驅動（詳見「外部觸發（cron-job.org）」）；原生 `schedule`
+> 只當最低限度備援，**不能**當成主要觸發來源。
+
 > **總體快照只有一個寫入者**：`macro_snapshot.json` 由 `Alerts - US Stocks`（`--market us`，
 > **刻意不加** `--macro-readonly`）負責更新與 commit；TW / Crypto 以 `--macro-readonly` **唯讀**取用（不連網、不寫檔），
 > 避免三個排程互搶同一個檔案、也避免同一則總體警報被通知三次。
 > 第一次執行前檔案還不存在，那個回合的報告只會暫時缺少總體脈絡。
+
+## 外部觸發（cron-job.org）
+
+### 為什麼需要外部觸發
+
+GitHub Actions 的原生 `schedule`（`cron: '*/5 * * * *'`）**非常不可靠**：名目上一天應跑
+288 次，實測卻常只有 **7~11 次/天**（高負載時 GitHub 會直接丟棄排程觸發、且不保證補跑）。
+因此三個 `Alerts - *` workflow 實際上是由 **cron-job.org** 以外部 HTTP 呼叫
+`workflow_dispatch` 驅動：
+
+```
+POST https://api.github.com/repos/<owner>/<repo>/actions/workflows/alerts-crypto.yml/dispatches
+POST https://api.github.com/repos/<owner>/<repo>/actions/workflows/alerts-tw.yml/dispatches
+POST https://api.github.com/repos/<owner>/<repo>/actions/workflows/alerts-us.yml/dispatches
+```
+
+請求需帶 `Authorization: Bearer <PAT>` 與 `Accept: application/vnd.github+json`，
+body 為 `{"ref":"master"}`。原生 `schedule` 只當「最低限度備援」，**不可依賴**。
+
+### cron-job.org 用的 PAT
+
+- 類型：**Fine-grained personal access token**（權限比 classic 小、更適合只給單一需求）
+- 權限：Repository permissions → **Actions: Read and write**（dispatch 需要 write）
+- Repository access：**Only select repositories** → 只勾本 repo
+- 命名建議：`cron-job.org - IndexAlertBot-Python workflow_dispatch (exp YYYY-MM-DD)`
+  方便日後辨識與輪替
+- 到期日：建議明確設定並設**行事曆提醒**（到期前輪替）；`No expiration` 雖可永不過期，
+  但外洩風險較高，請自行取捨
+
+> ⚠️ 這個 PAT **絕不可**寫進 repo 或 commit —— 本 repo 是 public。它只存在於
+> cron-job.org 的 job 設定（Authorization header）與你自己的密碼管理器裡。
+
+### 怎麼判斷有沒有成功
+
+到 cron-job.org 的 job →「Test run now」，看回應狀態碼：
+
+| 狀態碼 | 意義 |
+|---|---|
+| **HTTP 204 No Content** | ✅ 成功；GitHub 已接受並會建立一筆 `workflow_dispatch` run |
+| **401 Unauthorized** | ❌ PAT 已過期或被撤銷（**最常見**） |
+| **403 Forbidden** | ❌ PAT 權限不足（缺 `Actions: write`）或觸發速率限制 |
+| **404 Not Found** | ❌ repo／workflow 檔名錯誤，或 PAT 沒有此 repo 權限 |
+| **422 Unprocessable Entity** | ❌ workflow 未啟用，或 `ref`（分支）不存在 |
+
+### 斷線症狀與排錯
+
+cron-job.org 的 PAT 一旦到期，dispatch 會**靜默停止**：狀態檔不再更新、Telegram 不再收到
+警報，但 GitHub **不會**主動通知你「外部觸發器沒在呼叫了」。判斷方法：
+
+- Actions 執行紀錄突然只剩 `schedule` 觸發（一天幾次），`workflow_dispatch` 的 run 歸零
+- 反查：`https://github.com/<owner>/<repo>/actions?query=event%3Aworkflow_dispatch`
+
+修復步驟：
+
+1. GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens**
+   → 產生新 PAT（權限同上）
+2. cron-job.org 逐一打開 3 個 job → 更新 `Authorization` header 的 token
+3. 每個 job 按 **Test run now** → 確認回應為 **HTTP 204**
+4. 到 repo **Actions** 頁確認已出現新的 `workflow_dispatch` run
+5. 建議同時開啟每個 job 的 **Notify me on failure**（e-mail 告警）
+
+### 自動哨兵（Trigger Healthcheck）
+
+為了不再「靜默斷線」，repo 內建 `.github/workflows/trigger-healthcheck.yml`：
+以每小時的原生 `schedule` 醒來，呼叫 GitHub API 查詢**最近一次 `workflow_dispatch` run**
+距今多久（`GET /repos/{owner}/{repo}/actions/runs?event=workflow_dispatch`）。
+超過 `CRONJOB_MAX_SILENCE_MINUTES`（預設 30 分鐘；加密貨幣 24/7 每 5 分鐘一次，
+30 分鐘無聲即異常）就發 **Telegram 告警**，同時讓該 workflow 變紅，多一層提醒。
+
+> 本機可先驗證：`$env:GITHUB_REPOSITORY="<owner>/<repo>"; python healthcheck.py`
+> （public repo 未帶 token 也能查，回傳碼 `0`=正常 / `1`=斷線 / `2`=環境或查詢失敗）。
 
 ## 功能
 
@@ -31,7 +107,8 @@
 - 警報規則（門檻可在 `config.yaml` 調整，亦可依市場別覆寫）：
   - RSI 超買（≥ 70）/ 超賣（≤ 30）
   - 日內急漲 / 急跌（對比前收，預設 ±5%，加密貨幣 ±10%）
-  - 正 / 負乖離 MA20、MA60、MA200
+  - 正 / 負乖離 MA20、MA60、MA200（乖離「幅度」）
+  - 站上 / 跌破 MA20、MA60、MA200（均線「位置」；由 `ma_cross_alerts` 控制，**預設關閉**，目前只有 crypto 開啟）
 - 去重通知：`alert_state_*.json`（依市場分檔）記錄每個標的每種警報的狀態，
   條件解除（clear）後再次觸發才會重新通知
 - 總體經濟層（`src/macro.py`，免金鑰資料為主）：
@@ -66,7 +143,8 @@
 │   ├── alerts-crypto.yml             # 加密貨幣 24/7，每 5 分鐘
 │   ├── alerts-tw.yml                 # 台股開盤時段，每 5 分鐘
 │   ├── alerts-us.yml                 # 美股開盤時段，每 5 分鐘
-│   └── secret-scan.yml               # gitleaks 金鑰外洩掃描（push / PR / 每週排程）
+│   ├── secret-scan.yml               # gitleaks 金鑰外洩掃描（push / PR / 每週排程）
+│   └── trigger-healthcheck.yml       # 外部觸發器（cron-job.org）斷線哨兵（每小時）
 ├── src/
 │   ├── models.py                      # Quote / Alert 資料類別
 │   ├── config.py                      # 讀取 config.yaml + 環境變數
@@ -83,6 +161,7 @@
 │   └── notifier.py                    # Telegram 發送
 ├── tests/                             # 單元測試（指標、警報、狀態、報告）
 ├── main.py                            # 主程式進入點
+├── healthcheck.py                     # 外部觸發器（cron-job.org）健康檢查
 ├── config.yaml                        # 標的、門檻、各項設定
 ├── .gitleaks.toml                     # gitleaks 規則（官方預設 + 放行文件示意字串）
 ├── .env.example                       # 環境變數範本（值留空；真金鑰只放 GitHub Secrets）
@@ -150,6 +229,27 @@ python main.py
 > `macro.enabled: false` 時**完全不連網、不抓總體資料，也不會產生總體警報**；
 > 若磁碟上已有 `macro_snapshot.json`，報告仍會引用其中的既有數字（等同唯讀），方便臨時降載。
 
+### 站上／跌破均線警報（`ma_cross_alerts`）
+
+`alerts.defaults.ma_cross_alerts` **預設 `false`**，目前只有 `crypto` 用 `overrides` 開啟；
+US / TW 維持關閉（18 檔標的 × 3 條均線 = 54 個條件，開了會洗版）。
+
+| 設定 | 預設 | 說明 |
+|---|---|---|
+| `ma_cross_alerts` | `false` | 對 `ma_periods` 的每條均線多出 `ma_cross_up_{period}`（站上）與 `ma_cross_down_{period}`（跌破）兩個條件 |
+| `ma_cross_threshold` | `0.5` | 死區（%）：乖離率需超過 ±此值才觸發；設 `0.0` = 只要正負乖離就觸發（最靈敏） |
+
+- **只通知「穿越」那一刻**：條件成立期間狀態為 `active`（安靜），價格穿回均線另一側才 `clear`，
+  所以不會每 5 分鐘重複通知，也**不需要前一日價格／均線**。
+- **與 `ma_deviation_*` 的差別**：`ma_deviation_*` 是「幅度」警報（乖離達 ±5%），
+  `ma_cross_*` 是「位置」警報（現價在均線上方／下方）；兩者獨立，可能同回合一起出現。
+- **首次開啟會有一次「初始狀態」通知**：部署後第一回合會把當下已成立的關係全部通知一次
+  （例如 BTC 站上 MA60／MA200、跌破 MA20），之後只在再次穿越時通知。
+- **死區不是真遲滯**：乖離率回到 ±`ma_cross_threshold` 之內就算解除，
+  因此「突破 → 縮回死區 → 再突破」會再通知一次（這正是要壓制均線附近抖動的設計）。
+- 乖離率恰為 `0` 時「站上」與「跌破」**都不觸發**（程式用嚴格不等號），
+  避免同一條均線同時通報兩個相反方向。
+
 ### 環境變數（放 GitHub Secrets）
 
 | 變數 | 用途 | 必要性 |
@@ -184,6 +284,9 @@ repo 內任何檔案（含歷史）都不會、也不應該出現金鑰：
 - 程式只從**環境變數**讀取：`DEEPSEEK_API_KEY`、`TELEGRAM_BOT_TOKEN`、`TELEGRAM_CHAT_ID` 與選用的
   `FRED_API_KEY`（見 `src/config.py`）
 - `.gitignore` 已忽略 `.env`、`.env.*`、`*.env`、`*.pem`、`*.key`；repo 內只有**值為空**的 `.env.example`
+- cron-job.org 外部觸發用的 **GitHub PAT 既不放 repo、也不放 GitHub Secrets**，而是存在
+  cron-job.org 的 job 設定裡（見「外部觸發（cron-job.org）」）；它仍是機密，一旦洩漏，
+  他人即可觸發本 repo 的 workflow
 - Workflow 以 `${{ secrets.XXX }}` 注入；Secrets 的值不會出現在 repo 或執行日誌中
 - 程式不會把金鑰印出來（`src/reporter.py` 只把 key 放進 `Authorization` header，`requests` 的錯誤訊息不含 header）；
   log 等級固定 `INFO`，**請勿改成 `DEBUG`**（`urllib3` / `http.client` 的 DEBUG 會印出 request headers）
@@ -300,6 +403,11 @@ GitHub Actions（三個獨立排程，每 5 分鐘，依市場分流）
   沒有統計驗證、也不是機率；`partial` 標記代表該分數有部分分量因資料不足而算不出來。
 - **免費資料源**：BLS / Fed RSS / Yahoo 都是公開端點，可能限流或改版；失敗只影響該區塊，
   快照會保留上次成功資料，因此報告可能出現「資料時間較舊」但仍有內容的情況。
+- **外部觸發不可依賴原生排程**：GitHub 原生 `schedule` 一天只穩定跑 7~11 次（遠非 5 分鐘一次），
+  三個 workflow 的即時性全靠 cron-job.org 的外部 `workflow_dispatch`；PAT 到期會**靜默斷線**，
+  詳見「外部觸發（cron-job.org）」。`trigger-healthcheck` 只是**帳面上**的哨兵：它本身也用原生
+  `schedule`（每小時），所以仍可能晚幾小時才發現；且它只看**全域**最近一筆 `workflow_dispatch`，
+  無法分辨是哪一個市場的 job 掛掉。
 - **免責聲明**：本專案僅為技術監控工具，輸出的報告不構成任何投資建議。
 
 ## 開發

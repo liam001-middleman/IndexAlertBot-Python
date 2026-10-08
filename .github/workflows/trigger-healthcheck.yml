@@ -1,0 +1,47 @@
+name: Trigger Healthcheck
+
+# 外部觸發器（cron-job.org）斷線哨兵。
+#
+# 三個 alerts workflow 實際上靠 cron-job.org 以 workflow_dispatch 外部觸發；
+# GitHub 原生 schedule 極不穩定（`*/5` 一天僅 7~11 次），不能當備援。
+# 若 cron-job.org 的 PAT 過期（最常見）或 job 被停用，dispatch 會靜默停止、
+# 不會有任何錯誤訊息。本 workflow 以「每小時」原生排程醒來，檢查最近一次
+# workflow_dispatch 距今多久，太久就發 Telegram 告警並讓 workflow 變紅。
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read   # 讀取 Actions 執行紀錄（GET /repos/{owner}/{repo}/actions/runs）
+
+concurrency:
+  group: trigger-healthcheck
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check external trigger health
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          CRONJOB_MAX_SILENCE_MINUTES: '30'
+          TZ: 'Asia/Taipei'
+        run: python healthcheck.py

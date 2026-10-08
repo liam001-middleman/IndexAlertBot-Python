@@ -85,12 +85,15 @@ alerts:
     intraday_change_pct: 5.0  # 日內對比前收漲跌幅門檻（%）
     ma_deviation_pct: 5.0     # 乖離 MA 門檻（%）
     ma_periods: [20, 60, 200] # 要計算與監控的均線週期
+    ma_cross_alerts: false    # 站上/跌破均線警報（預設關閉；開啟後每條均線多出「站上」「跌破」2 個條件）
+    ma_cross_threshold: 0.5   # 站上/跌破的死區（%）：乖離需超過此值才觸發，避免在均線附近抖動洗版
   overrides:
     us:
       ma_deviation_pct: 3.0  # US MA deviation threshold 3% (test)
     crypto:
       intraday_change_pct: 5.0   # crypto: same as default threshold
       ma_deviation_pct: 5.0      # crypto: same as default threshold
+      ma_cross_alerts: true      # crypto：價格穿越 MA20/60/200 就出報告（乖離_neg 側從未被觸發過，需要這條才會講話）
     tw:
       intraday_change_pct: 6.0
 

@@ -73,6 +73,8 @@ class AlertConfig:
     intraday_change_pct: float = 5.0
     ma_deviation_pct: float = 5.0
     ma_periods: list = field(default_factory=lambda: [20, 60, 200])
+    ma_cross_alerts: bool = False  # 站上／跌破均線警報（預設關閉，需逐市場開啟）
+    ma_cross_threshold: float = 0.0  # 站上／跌破的死區（%）：乖離需超過此值才觸發
 
     def merged(self, override: Optional[dict]) -> "AlertConfig":
         """以 override 覆寫目前數值，回傳新的 AlertConfig。"""
@@ -83,6 +85,8 @@ class AlertConfig:
             "intraday_change_pct": self.intraday_change_pct,
             "ma_deviation_pct": self.ma_deviation_pct,
             "ma_periods": list(self.ma_periods),
+            "ma_cross_alerts": self.ma_cross_alerts,
+            "ma_cross_threshold": self.ma_cross_threshold,
         }
         if override:
             data.update({k: v for k, v in override.items() if v is not None})
@@ -192,6 +196,8 @@ def load_config(path: Optional[str] = None) -> Config:
         intraday_change_pct=float(defaults.get("intraday_change_pct", 5.0)),
         ma_deviation_pct=float(defaults.get("ma_deviation_pct", 5.0)),
         ma_periods=[int(p) for p in defaults.get("ma_periods", [20, 60, 200])],
+        ma_cross_alerts=bool(defaults.get("ma_cross_alerts", False)),
+        ma_cross_threshold=float(defaults.get("ma_cross_threshold", 0.0)),
     )
     alerts_overrides = alert_raw.get("overrides", {}) or {}
 

@@ -1,7 +1,8 @@
 """警報規則引擎。
 
 流程：
-1. evaluate_conditions() 評估所有條件（RSI 超買/超賣、日內急漲/急跌、MA 乖離）
+1. evaluate_conditions() 評估所有條件（RSI 超買/超賣、日內急漲/急跌、MA 乖離、
+   站上/跌破 MA）
 2. get_new_alerts() 比對 alert_state.json，只回傳「新觸發」的警報，
    並同步更新狀態（觸發→active，解除→clear）。
 """
@@ -21,6 +22,15 @@ def _ma_alert_type(period: int, positive: bool) -> str:
 
 def _ma_alert_name(period: int, positive: bool) -> str:
     return f"MA{period} 正乖離" if positive else f"MA{period} 負乖離"
+
+
+def _ma_cross_alert_type(period: int, above: bool) -> str:
+    """站上（above=True）／跌破均線的條件代號。"""
+    return f"ma_cross_up_{period}" if above else f"ma_cross_down_{period}"
+
+
+def _ma_cross_alert_name(period: int, above: bool) -> str:
+    return f"MA{period} 站上" if above else f"MA{period} 跌破"
 
 
 def _fmt(value: float) -> str:
@@ -128,6 +138,40 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                     ),
                 }
             )
+
+    if cfg.ma_cross_alerts:
+        # 「站上／跌破均線」：用乖離率的正負號當「位置」條件，配合狀態機後，
+        # 只在「穿越均線」那一刻通知（成立期間為 active，穿越回去才 clear），
+        # 不需要前一日價格／均線，也不必改 Quote 或 indicators。
+        band = abs(float(cfg.ma_cross_threshold or 0.0))
+        for period in cfg.ma_periods:
+            window = int(period)
+            dev = quote.ma_deviation_pct.get(str(window))
+            if dev is None:
+                continue
+            ma_value = quote.ma.get(str(window))
+            for above in (True, False):
+                # 用嚴格不等號：dev 恰為 0 時「站上」與「跌破」都不觸發，避免同時通報。
+                triggered = (dev > band) if above else (dev < -band)
+                verb = "站上" if above else "跌破"
+                band_txt = f"，已超出 {_fmt(band)}% 死區" if (band > 0 and triggered) else ""
+                conditions.append(
+                    {
+                        "type": _ma_cross_alert_type(window, above),
+                        "alert_name": _ma_cross_alert_name(window, above),
+                        "triggered": triggered,
+                        "value": dev,
+                        "threshold": band,
+                        "severity": "info",
+                        "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)} "
+                                   f"{verb} MA{window} {dev:+.1f}%",
+                        "detail": (
+                            f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)} {verb} "
+                            f"MA{window} {_fmt(ma_value) if ma_value else 'N/A'}，"
+                            f"乖離率 {dev:+.1f}%{band_txt}"
+                        ),
+                    }
+                )
 
     return conditions
 
