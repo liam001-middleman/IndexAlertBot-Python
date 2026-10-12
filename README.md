@@ -128,9 +128,17 @@ python dispatch_check.py --workflow alerts-us.yml --ref master
 
 | Workflow | 活躍時段（UTC） | 檔案 |
 |---|---|---|
-| Alerts - US Stocks | 週一~週五 13:00–20:55 | `alerts-us.yml` |
+| Alerts - US Stocks | 週一~週五 15:20–21:55（判定期間） | `alerts-us.yml` |
 | Alerts - TW Stocks | 週一~週五 01:00–05:55 | `alerts-tw.yml` |
 | Alerts - Crypto | 每天 00:00–23:59（24/7） | `alerts-crypto.yml` |
+
+> US 的判定期間刻意比 dispatcher 的實際範圍晚開：cron-job.org 的**實測**活躍範圍是
+> 13:00–21:55（最後一筆 dispatch 為 21:55:10），且起點出現過 13:00 / 13:40 / 14:20 三種；
+> 若排程跟隨美東時區，冬令（EST）還會再晚 1 小時。哨兵誤報一次就會失去信任，
+> 因此取「任何時區／DST／排程設定都不會誤報」的交集 **15:20**（+30 分寬容 → 15:50 起判定），
+> 代價是 dispatcher 若在開盤就掛掉，最晚 15:50 才會告警。
+> 注意：這與 `alerts-us.yml` 的原生 `cron`（`*/5 13-20`，見上方排程表）是兩回事——
+> 哨兵只認 `workflow_dispatch`（cron-job.org 觸發）的紀錄，不看原生 `schedule`。
 
 在活躍時段內「最近一次距現在已超過 `CRONJOB_MAX_SILENCE_MINUTES`（預設 30 分鐘）」或
 「完全查不到紀錄」的 workflow，會發出 **Telegram 告警並指名是哪一個 workflow**

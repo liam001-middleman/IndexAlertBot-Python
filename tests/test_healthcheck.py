@@ -21,14 +21,14 @@ from healthcheck import (
     window_text,
 )
 
-NOW = datetime(2026, 10, 7, 15, 30, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 10, 7, 16, 0, 0, tzinfo=timezone.utc)
 US = next(wf for wf in WORKFLOWS if wf["file"] == "alerts-us.yml")
 TW = next(wf for wf in WORKFLOWS if wf["file"] == "alerts-tw.yml")
 CRYPTO = next(wf for wf in WORKFLOWS if wf["file"] == "alerts-crypto.yml")
 
 # 模擬 2026-09-29 之後 US / TW 靜默斷線、只有 crypto 正常的情境
 US_LAST_RUN = "2026-09-29T22:24:00Z"
-CRYPTO_FRESH = "2026-10-07T15:25:00Z"
+CRYPTO_FRESH = "2026-10-07T15:55:00Z"
 
 
 def _runs(created_at):
@@ -51,7 +51,7 @@ def test_latest_dispatch_age_minutes_picks_newest():
     payload = {
         "workflow_runs": [
             {"created_at": "2026-10-07T15:00:00Z"},
-            {"created_at": "2026-10-07T15:25:00Z"},
+            {"created_at": "2026-10-07T15:55:00Z"},
             {"created_at": "2026-10-07T14:55:00Z"},
         ]
     }
@@ -93,7 +93,7 @@ def test_parse_hhmm_converts_and_rejects_bad_input():
 
 
 def test_window_text_formats_weekday_and_daily_ranges():
-    assert window_text(US["weekdays"], US["window"]) == "週一~週五 13:00–20:55（UTC）"
+    assert window_text(US["weekdays"], US["window"]) == "週一~週五 15:20–21:55（UTC）"
     assert window_text(CRYPTO["weekdays"], CRYPTO["window"]) == "每天 00:00–23:59（UTC）"
 
 
@@ -105,17 +105,17 @@ def test_is_within_window_respects_weekday_and_edges():
     assert is_within_window(saturday, US["weekdays"], US["window"]) is False
     # 加密貨幣 24/7
     assert is_within_window(saturday, CRYPTO["weekdays"], CRYPTO["window"]) is True
-    # 時段邊界：13:00 含、20:55 含、20:56 不含
-    assert is_within_window(datetime(2026, 10, 7, 13, 0, tzinfo=timezone.utc), US["weekdays"], US["window"])
-    assert is_within_window(datetime(2026, 10, 7, 20, 55, tzinfo=timezone.utc), US["weekdays"], US["window"])
-    assert not is_within_window(datetime(2026, 10, 7, 20, 56, tzinfo=timezone.utc), US["weekdays"], US["window"])
+    # 時段邊界：15:20 含、21:55 含、21:56 不含（13:00 起為 dispatcher 起點未定區間，不判定）
+    assert is_within_window(datetime(2026, 10, 7, 15, 20, tzinfo=timezone.utc), US["weekdays"], US["window"])
+    assert is_within_window(datetime(2026, 10, 7, 21, 55, tzinfo=timezone.utc), US["weekdays"], US["window"])
+    assert not is_within_window(datetime(2026, 10, 7, 21, 56, tzinfo=timezone.utc), US["weekdays"], US["window"])
 
 
 def test_check_started_applies_grace_period():
     weekdays, window = US["weekdays"], US["window"]
-    # 時段剛開始 13:10 → 仍在 30 分鐘寬容期內，不檢查
-    assert check_started(datetime(2026, 10, 7, 13, 10, tzinfo=timezone.utc), weekdays, window, 30) is False
-    assert check_started(datetime(2026, 10, 7, 13, 30, tzinfo=timezone.utc), weekdays, window, 30) is True
+    # 時段剛開始 15:30 → 仍在 30 分鐘寬容期內（15:50 起才判定），不檢查
+    assert check_started(datetime(2026, 10, 7, 15, 30, tzinfo=timezone.utc), weekdays, window, 30) is False
+    assert check_started(datetime(2026, 10, 7, 15, 50, tzinfo=timezone.utc), weekdays, window, 30) is True
     # 週末一律不算已開始
     assert check_started(datetime(2026, 10, 10, 15, 0, tzinfo=timezone.utc), weekdays, window, 30) is False
 
@@ -140,7 +140,7 @@ def test_evaluate_silence_flags_only_silent_workflows_in_window():
     assert item["name"] == "Alerts - US Stocks"
     assert item["age"] > 30
     assert item["last_run_text"] == "2026-09-29 22:24 UTC"
-    assert item["window_text"] == "週一~週五 13:00–20:55（UTC）"
+    assert item["window_text"] == "週一~週五 15:20–21:55（UTC）"
 
 
 def test_evaluate_silence_ignores_workflows_without_query_data():
@@ -166,7 +166,7 @@ def test_evaluate_silence_weekend_skips_weekday_workflows():
     # 週末：US / TW 不判定（即使已靜默多日）；24/7 的 crypto 仍正常
     assert evaluate_silence(saturday, runs, 30) == []
     # 對照組：同一組資料在平日就會抓到 US / TW 斷線
-    weekday = datetime(2026, 10, 9, 15, 30, tzinfo=timezone.utc)  # 週五
+    weekday = datetime(2026, 10, 9, 16, 0, tzinfo=timezone.utc)  # 週五
     assert [item["workflow"] for item in evaluate_silence(weekday, runs, 30)] == ["alerts-us.yml"]
 
 
@@ -177,7 +177,7 @@ def test_build_silent_message_names_workflow_and_recovery_steps():
             "workflow": "alerts-us.yml",
             "age": 13000.0,
             "last_run_text": "2026-09-29 22:24 UTC",
-            "window_text": "週一~週五 13:00–20:55（UTC）",
+            "window_text": "週一~週五 15:20–21:55（UTC）",
             "actions_url": "https://github.com/owner/repo/actions/workflows/alerts-us.yml",
         }
     ]
@@ -253,8 +253,8 @@ def test_main_returns_0_when_every_workflow_is_healthy(monkeypatch, env):
     _patch_fetch(
         monkeypatch,
         {
-            "alerts-us.yml": _runs("2026-10-07T15:25:00Z"),
-            "alerts-tw.yml": _runs("2026-10-07T15:25:00Z"),
+            "alerts-us.yml": _runs("2026-10-07T15:55:00Z"),
+            "alerts-tw.yml": _runs("2026-10-07T15:55:00Z"),
             "alerts-crypto.yml": _runs(CRYPTO_FRESH),
         },
     )
@@ -277,7 +277,7 @@ def test_main_alerts_and_names_only_the_dead_workflow(monkeypatch, env):
     assert len(sent) == 1
     message = sent[0]
     assert "Alerts - US Stocks" in message          # 指名掛掉的 workflow
-    assert "Alerts - TW Stocks" not in message      # 非活躍時段（15:30 UTC）不判定
+    assert "Alerts - TW Stocks" not in message      # 非活躍時段（16:00 UTC）不判定
     assert "Alerts - Crypto" not in message         # 正常的不點名
     assert "actions/workflows/alerts-us.yml" in message
 
@@ -327,3 +327,22 @@ def test_main_respects_silence_threshold_env(monkeypatch, env):
     assert main([], now=NOW) == 1
     assert len(sent) == 1
     assert "Alerts - Crypto" in sent[0]
+
+
+def test_us_window_tolerates_early_dispatcher_drift():
+    """US 判定期間必須容忍 dispatcher 起點漂移（13:00 / 13:40 / 14:20）而不誤報。
+
+    2026-09-30 的實例：PAT 到期後 dispatcher 靜默；若哨兵在 13:20~14:40 就判定，
+    正常日（起點較晚）會被誤判成斷線，讓告警失去可信度。
+    """
+    weekdays, window = US["weekdays"], US["window"]
+    for hour, minute in ((13, 0), (13, 20), (13, 40), (14, 0), (14, 20), (14, 40),
+                         (15, 0), (15, 20), (15, 40)):
+        moment = datetime(2026, 10, 7, hour, minute, tzinfo=timezone.utc)
+        assert check_started(moment, weekdays, window, 30) is False
+    # 15:50（15:20 + 30 分寬容）起才進入判定，且涵蓋到 dispatcher 實測的最後一筆 21:55
+    assert check_started(datetime(2026, 10, 7, 15, 50, tzinfo=timezone.utc), weekdays, window, 30) is True
+    assert is_within_window(datetime(2026, 10, 7, 21, 55, tzinfo=timezone.utc), weekdays, window) is True
+    # 視窗結束後（22:30）即使「已過寬容期」也不該判定
+    assert check_started(datetime(2026, 10, 7, 22, 30, tzinfo=timezone.utc), weekdays, window, 30) is False
+    assert not is_within_window(datetime(2026, 10, 7, 21, 56, tzinfo=timezone.utc), weekdays, window)

@@ -14,7 +14,7 @@ PAT 過期或被撤銷，dispatch 會**靜默停止**——狀態檔不再更新
 檢查只在各 workflow 的**活躍時段**內進行，且時段開始後的寬容期（grace）內不告警，
 避免週末或時段剛開始時拿昨日的舊紀錄誤報：
 
-    Alerts - US Stocks    週一~週五 13:00–20:55（UTC）
+    Alerts - US Stocks    週一~週五 15:20–21:55（UTC；判定期間，見 WORKFLOWS 註解）
     Alerts - TW Stocks    週一~週五 01:00–05:55（UTC）
     Alerts - Crypto       每天 00:00–23:59（UTC，24/7）
 
@@ -77,12 +77,21 @@ WEEKDAYS_ALL = (0, 1, 2, 3, 4, 5, 6)
 
 # 三個 alerts workflow 的活躍時段（UTC）。哨兵只在各自時段內檢查，
 # 週末與時段外一律不檢查，避免拿昨日的舊紀錄誤報。
+#
+# US 的時段刻意比 dispatcher 的實際範圍（cron-job.org 實測 13:00–21:55）晚開：
+#   - 起點實測有 13:00（09-29）、13:40（09-01）、14:20（09-28）三種，
+#     且若 cron-job.org 排程跟隨美東時區，冬令（EST）還會再晚 1 小時。
+#   - 哨兵誤報一次就會失去信任，因此取「任何時區／DST／排程設定都不會誤報」的
+#     交集 15:20 起算（+30 分寬容 → 15:50 起才判定）。
+#   - 代價：dispatcher 若在開盤（13:00）就掛掉，最晚 15:50 才會告警；
+#     但仍遠優於過去「靜默 12 天」無人發現。
+#   - 結束時間 21:55 為實測最後一筆 dispatch 的時間（09-01、09-29 皆相同）。
 WORKFLOWS: List[Dict[str, object]] = [
     {
         "file": "alerts-us.yml",
         "name": "Alerts - US Stocks",
         "weekdays": WEEKDAYS_WEEKDAY,
-        "window": ("13:00", "20:55"),
+        "window": ("15:20", "21:55"),
     },
     {
         "file": "alerts-tw.yml",
@@ -147,7 +156,7 @@ def parse_hhmm(value: str) -> int:
 
 
 def window_text(weekdays: Sequence[int], window: Sequence[str]) -> str:
-    """把活躍時段轉成人看得懂的文字，例如「週一~週五 13:00–20:55（UTC）」。"""
+    """把活躍時段轉成人看得懂的文字，例如「週一~週五 15:20–21:55（UTC）」。"""
     days = sorted(int(day) for day in weekdays)
     if len(days) == 7:
         day_text = "每天"
@@ -172,8 +181,14 @@ def check_started(
     window: Sequence[str],
     grace_minutes: int,
 ) -> bool:
-    """活躍時段是否已開始且過了寬容期（避免時段一開始就拿昨天的舊紀錄誤報）。"""
+    """活躍時段是否已開始且過了寬容期（避免時段一開始就拿昨天的舊紀錄誤報）。
+
+    自帶 `is_within_window` 檢查，因此時段開始前與結束後都回 False；
+    `evaluate_silence` 仍會先檢查視窗（兩者是 AND 關係）。
+    """
     if now.weekday() not in tuple(int(day) for day in weekdays):
+        return False
+    if not is_within_window(now, weekdays, window):
         return False
     minutes = now.hour * 60 + now.minute
     return minutes >= parse_hhmm(window[0]) + max(0, int(grace_minutes))
