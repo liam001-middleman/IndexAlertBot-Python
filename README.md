@@ -76,27 +76,74 @@ cron-job.org 的 PAT 一旦到期，dispatch 會**靜默停止**：狀態檔不�
 警報，但 GitHub **不會**主動通知你「外部觸發器沒在呼叫了」。判斷方法：
 
 - Actions 執行紀錄突然只剩 `schedule` 觸發（一天幾次），`workflow_dispatch` 的 run 歸零
-- 反查：`https://github.com/<owner>/<repo>/actions?query=event%3Aworkflow_dispatch`
+- 反查全部：`https://github.com/<owner>/<repo>/actions?query=event%3Aworkflow_dispatch`
+- 反查單一市場：`https://github.com/<owner>/<repo>/actions/workflows/alerts-us.yml`
 
-修復步驟：
+#### 症狀：job 顯示 `Failed (HTTP error)` 且被自動停用（Inactive）
 
-1. GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens**
-   → 產生新 PAT（權限同上）
-2. cron-job.org 逐一打開 3 個 job → 更新 `Authorization` header 的 token
-3. 每個 job 按 **Test run now** → 確認回應為 **HTTP 204**
-4. 到 repo **Actions** 頁確認已出現新的 `workflow_dispatch` run
-5. 建議同時開啟每個 job 的 **Notify me on failure**（e-mail 告警）
+cron-job.org 在連續失敗後會**自動停用（Inactive）**該 job，而且預設不一定寄信通知，
+這是最容易釀成「靜默斷線」的組合。實際案例：US job 自 2026-09-29、TW job 自 2026-09-30
+起就再也沒有 dispatch，但**加密貨幣 job 仍正常**，所以只查「全 repo 最近一筆
+`workflow_dispatch`」的舊版哨兵完全看不出異常。
+
+排錯順序：
+
+1. cron-job.org → 該 job → **History** 分頁 → 點開失敗紀錄，記下 HTTP 狀態碼
+   （對照上方表格：`401`=PAT 過期、`403`=權限不足、`404`=URL／repo 權限範圍錯誤、
+   `422`=workflow 未啟用或 `ref` 分支不存在）
+2. 與**仍正常運作**的 job（通常是 24/7 的 crypto）逐欄比對：
+   Method（`POST`）、URL（`.../actions/workflows/<檔名>/dispatches`）、
+   Request body（`{"ref":"master"}`）、`Authorization` header
+3. 修正後按 **Test run now** → 確認回應 **HTTP 204**
+4. 被停用的 job 務必按 **Enable**（關掉 Inactive），並勾選 **Notify me on failure**
+5. 回 repo **Actions** 確認已出現新的 `workflow_dispatch` run、狀態檔再次被 commit
+
+#### 本機先驗證：`dispatch_check.py`
+
+不必等下一次排程才知道 PAT 有沒有效——用同一顆 PAT、同一個端點在本地直接打：
+
+```powershell
+$env:GITHUB_PAT="github_pat_..."      # fine-grained PAT（Actions: Read and write）
+python dispatch_check.py              # 依序檢查三個 alerts workflow
+python dispatch_check.py --dry-run    # 只印出將送出的 URL／headers／body，不呼叫 API
+python dispatch_check.py --workflow alerts-us.yml --ref master
+```
+
+輸出會逐一列出 `PASS`／`FAIL` 與狀態碼的中文處置建議；回傳碼 `0`=全部 204、
+`1`=有 workflow 失敗、`2`=缺少 PAT 或參數錯誤。**PAT 只從環境變數讀取、永不寫進輸出**
+（只顯示 `***（長度 N）`），可以安心把輸出貼給別人看。
 
 ### 自動哨兵（Trigger Healthcheck）
 
 為了不再「靜默斷線」，repo 內建 `.github/workflows/trigger-healthcheck.yml`：
-以每小時的原生 `schedule` 醒來，呼叫 GitHub API 查詢**最近一次 `workflow_dispatch` run**
-距今多久（`GET /repos/{owner}/{repo}/actions/runs?event=workflow_dispatch`）。
-超過 `CRONJOB_MAX_SILENCE_MINUTES`（預設 30 分鐘；加密貨幣 24/7 每 5 分鐘一次，
-30 分鐘無聲即異常）就發 **Telegram 告警**，同時讓該 workflow 變紅，多一層提醒。
+以原生 `schedule`（每 20 分鐘）醒來，**逐一**檢查三個 alerts workflow 最近的
+`workflow_dispatch` run 距今多久
+（`GET /repos/{owner}/{repo}/actions/workflows/<檔名>/runs?event=workflow_dispatch`）。
 
-> 本機可先驗證：`$env:GITHUB_REPOSITORY="<owner>/<repo>"; python healthcheck.py`
-> （public repo 未帶 token 也能查，回傳碼 `0`=正常 / `1`=斷線 / `2`=環境或查詢失敗）。
+> 為什麼要逐一查？只查全 repo 總表（`/actions/runs`）會被**每 5 分鐘**的加密貨幣流量
+> 蓋掉——US／TW 即使斷線多日，全域「最近一筆」仍然是幾分鐘前的 crypto。
+
+各 workflow 只在**自己的活躍時段**內被檢查，且時段開始後有寬容期，避免週末或剛開盤時
+拿昨日舊紀錄誤報：
+
+| Workflow | 活躍時段（UTC） | 檔案 |
+|---|---|---|
+| Alerts - US Stocks | 週一~週五 13:00–20:55 | `alerts-us.yml` |
+| Alerts - TW Stocks | 週一~週五 01:00–05:55 | `alerts-tw.yml` |
+| Alerts - Crypto | 每天 00:00–23:59（24/7） | `alerts-crypto.yml` |
+
+在活躍時段內「最近一次距現在已超過 `CRONJOB_MAX_SILENCE_MINUTES`（預設 30 分鐘）」或
+「完全查不到紀錄」的 workflow，會發出 **Telegram 告警並指名是哪一個 workflow**
+（附最近一次時間、活躍時段與 Actions 連結），同時讓該 workflow 變紅，多一層提醒。
+查詢失敗（GitHub API 錯誤）**不算斷線**、不會誤報；三個都查不到才以回傳碼 `2` 結束。
+
+相關環境變數：`CRONJOB_MAX_SILENCE_MINUTES`（預設 30）、`CRONJOB_GRACE_MINUTES`
+（預設同上）、`HEALTHCHECK_WORKFLOWS`（逗號分隔檔名，只檢查特定 workflow）。
+
+> 本機可先驗證：
+> `$env:GITHUB_REPOSITORY="<owner>/<repo>"; python healthcheck.py --no-notify`
+> （public repo 未帶 token 也能查，回傳碼 `0`=正常 / `1`=斷線 / `2`=環境或查詢失敗；
+> `--no-notify` 只印出結果、不發 Telegram）
 
 ## 功能
 
@@ -146,7 +193,7 @@ cron-job.org 的 PAT 一旦到期，dispatch 會**靜默停止**：狀態檔不�
 │   ├── alerts-tw.yml                 # 台股開盤時段，每 5 分鐘
 │   ├── alerts-us.yml                 # 美股開盤時段，每 5 分鐘
 │   ├── secret-scan.yml               # gitleaks 金鑰外洩掃描（push / PR / 每週排程）
-│   └── trigger-healthcheck.yml       # 外部觸發器（cron-job.org）斷線哨兵（每小時）
+│   └── trigger-healthcheck.yml       # 外部觸發器（cron-job.org）斷線哨兵（每 20 分鐘，逐一檢查）
 ├── src/
 │   ├── models.py                      # Quote / Alert 資料類別
 │   ├── config.py                      # 讀取 config.yaml + 環境變數
@@ -163,7 +210,8 @@ cron-job.org 的 PAT 一旦到期，dispatch 會**靜默停止**：狀態檔不�
 │   └── notifier.py                    # Telegram 發送
 ├── tests/                             # 單元測試（指標、警報、狀態、報告）
 ├── main.py                            # 主程式進入點
-├── healthcheck.py                     # 外部觸發器（cron-job.org）健康檢查
+├── healthcheck.py                     # 外部觸發器（cron-job.org）健康檢查（逐一 workflow、含活躍時段）
+├── dispatch_check.py                  # cron-job.org 設定驗證（PAT／URL／body，支援 --dry-run）
 ├── config.yaml                        # 標的、門檻、各項設定
 ├── .gitleaks.toml                     # gitleaks 規則（官方預設 + 放行文件示意字串）
 ├── .env.example                       # 環境變數範本（值留空；真金鑰只放 GitHub Secrets）
@@ -427,10 +475,11 @@ GitHub Actions（三個獨立排程，每 5 分鐘，依市場分流）
 - **免費資料源**：BLS / Fed RSS / Yahoo 都是公開端點，可能限流或改版；失敗只影響該區塊，
   快照會保留上次成功資料，因此報告可能出現「資料時間較舊」但仍有內容的情況。
 - **外部觸發不可依賴原生排程**：GitHub 原生 `schedule` 一天只穩定跑 7~11 次（遠非 5 分鐘一次），
-  三個 workflow 的即時性全靠 cron-job.org 的外部 `workflow_dispatch`；PAT 到期會**靜默斷線**，
-  詳見「外部觸發（cron-job.org）」。`trigger-healthcheck` 只是**帳面上**的哨兵：它本身也用原生
-  `schedule`（每小時），所以仍可能晚幾小時才發現；且它只看**全域**最近一筆 `workflow_dispatch`，
-  無法分辨是哪一個市場的 job 掛掉。
+  三個 workflow 的即時性全靠 cron-job.org 的外部 `workflow_dispatch`；PAT 到期或被撤銷、
+  job 被自動停用（Inactive）都會**靜默斷線**，詳見「外部觸發（cron-job.org）」。
+  `trigger-healthcheck` 哨兵本身也用原生 `schedule`（每 20 分鐘），仍可能晚數十分鐘才發現；
+  它只**逐一**檢查各 workflow（不會被 24/7 的 crypto 蓋掉），且只在**各自的活躍時段**內判定，
+  時段外（含週末）與寬容期內不判定，因此不會把「休市期間沒有 dispatch」這種正常現象誤報成斷線。
 - **免責聲明**：本專案僅為技術監控工具，輸出的報告不構成任何投資建議。
 
 ## 開發
@@ -438,4 +487,23 @@ GitHub Actions（三個獨立排程，每 5 分鐘，依市場分流）
 ```bash
 pip install -r requirements-dev.txt
 python -m pytest tests -q
+```
+
+個別測試檔（哨兵與外部觸發驗證工具）：
+
+```bash
+python -m pytest tests/test_healthcheck.py -q
+python -m pytest tests/test_dispatch_check.py -q
+```
+
+驗證 cron-job.org 的外部觸發設定（詳見「外部觸發（cron-job.org）」）：
+
+```powershell
+$env:GITHUB_PAT="github_pat_..."   # 只讀環境變數，不會寫進 repo
+python dispatch_check.py --dry-run # 先看將送出的 URL／headers／body，不呼叫 API
+python dispatch_check.py           # 實際觸發三個 alerts workflow（204=成功）
+
+# 本機重現哨兵判定（--no-notify 只印結果、不發 Telegram）
+$env:GITHUB_REPOSITORY="<owner>/<repo>"
+python healthcheck.py --no-notify
 ```

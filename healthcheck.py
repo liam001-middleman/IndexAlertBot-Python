@@ -7,9 +7,20 @@ cron-job.org 以 `workflow_dispatch` 方式**外部觸發**。若 cron-job.org �
 PAT 過期或被撤銷，dispatch 會**靜默停止**——狀態檔不再更新、Telegram 不再收到
 警報，但 GitHub 不會有任何錯誤訊息。本程式就是防堵這種「靜默斷線」的哨兵。
 
-原理：向 GitHub API 查詢本 repo 最近的 `workflow_dispatch` 執行紀錄，若「最近一次」
-距現在已超過 `CRONJOB_MAX_SILENCE_MINUTES` 分鐘（或完全查不到紀錄），即透過
-Telegram 發出告警，並以非零狀態結束（讓 workflow 一起變紅，多一層提醒）。
+原理：**逐一**向 GitHub API 查詢每個 alerts workflow 最近的 `workflow_dispatch`
+執行紀錄（`GET /repos/{owner}/{repo}/actions/workflows/{file}/runs`），而不是查
+全 repo 的總表——因為加密貨幣 24/7 每 5 分鐘的流量會蓋掉 US／TW 的斷線。
+
+檢查只在各 workflow 的**活躍時段**內進行，且時段開始後的寬容期（grace）內不告警，
+避免週末或時段剛開始時拿昨日的舊紀錄誤報：
+
+    Alerts - US Stocks    週一~週五 13:00–20:55（UTC）
+    Alerts - TW Stocks    週一~週五 01:00–05:55（UTC）
+    Alerts - Crypto       每天 00:00–23:59（UTC，24/7）
+
+若某 workflow 在活躍時段內「最近一次距現在已超過 `CRONJOB_MAX_SILENCE_MINUTES`
+分鐘」或「完全查不到紀錄」，即透過 Telegram 發出**指名該 workflow** 的告警，
+並以非零狀態結束（讓 workflow 一起變紅，多一層提醒）。
 
 環境變數：
     TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID  用於告警（沿用主程式的 Secrets）
@@ -18,20 +29,24 @@ Telegram 發出告警，並以非零狀態結束（讓 workflow 一起變紅，�
     GITHUB_API_URL                         預設 https://api.github.com
     CRONJOB_MAX_SILENCE_MINUTES            預設 30（加密貨幣 24/7 每 5 分鐘一次，
                                            30 分鐘無聲即視為異常）
+    CRONJOB_GRACE_MINUTES                  預設等於上面的門檻（活躍時段開始後的寬容期）
+    HEALTHCHECK_WORKFLOWS                  選用，逗號分隔的 workflow 檔名；未設定=三個都檢查
 
 用法：
-    python healthcheck.py
+    python healthcheck.py                # 檢查並在異常時發 Telegram
+    python healthcheck.py --no-notify    # 只印出結果，不發送（本機測試用）
 
 回傳碼：
-    0  正常（最近仍有 workflow_dispatch）
-    1  偵測到斷線（已嘗試發送 Telegram 告警）
-    2  執行環境問題（缺少 GITHUB_REPOSITORY，或查詢 API 失敗）
+    0  正常（活躍時段內各 workflow 都有即時的外部觸發紀錄）
+    1  偵測到斷線（已嘗試發送 Telegram 告警，訊息會指名是哪個 workflow）
+    2  執行環境問題（缺少 GITHUB_REPOSITORY，或所有查詢都失敗）
 """
+import argparse
 import logging
 import os
 import sys
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Dict, List, Optional, Sequence
 
 import requests
 
@@ -55,6 +70,33 @@ logger = logging.getLogger("healthcheck")
 DEFAULT_GITHUB_API_URL = "https://api.github.com"
 DEFAULT_MAX_SILENCE_MINUTES = 30
 GITHUB_API_VERSION = "2022-11-28"
+
+WEEKDAY_NAMES = "一二三四五六日"
+WEEKDAYS_WEEKDAY = (0, 1, 2, 3, 4)
+WEEKDAYS_ALL = (0, 1, 2, 3, 4, 5, 6)
+
+# 三個 alerts workflow 的活躍時段（UTC）。哨兵只在各自時段內檢查，
+# 週末與時段外一律不檢查，避免拿昨日的舊紀錄誤報。
+WORKFLOWS: List[Dict[str, object]] = [
+    {
+        "file": "alerts-us.yml",
+        "name": "Alerts - US Stocks",
+        "weekdays": WEEKDAYS_WEEKDAY,
+        "window": ("13:00", "20:55"),
+    },
+    {
+        "file": "alerts-tw.yml",
+        "name": "Alerts - TW Stocks",
+        "weekdays": WEEKDAYS_WEEKDAY,
+        "window": ("01:00", "05:55"),
+    },
+    {
+        "file": "alerts-crypto.yml",
+        "name": "Alerts - Crypto",
+        "weekdays": WEEKDAYS_ALL,
+        "window": ("00:00", "23:59"),
+    },
+]
 
 
 def parse_timestamp(value) -> Optional[datetime]:
@@ -91,31 +133,217 @@ def should_alert(age_minutes: Optional[float], max_silence_minutes: int) -> bool
     return age_minutes > max_silence_minutes
 
 
-def build_alert_message(age_minutes: Optional[float], max_silence_minutes: int, repo: str) -> str:
-    """組出斷線告警文字（純文字，不使用 emoji / Markdown）。"""
-    lines = ["[警示] 外部觸發器疑似斷線（cron-job.org workflow_dispatch）", ""]
-    if age_minutes is None:
-        lines.append("查不到任何 workflow_dispatch 執行紀錄（可能從未成功觸發）。")
+def parse_hhmm(value: str) -> int:
+    """把 `HH:MM` 轉成「當日第幾分鐘」（用於活躍時段比較）。"""
+    text = str(value).strip()
+    try:
+        hours, minutes = text.split(":")
+        total = int(hours) * 60 + int(minutes)
+    except (AttributeError, ValueError) as exc:
+        raise ValueError(f"時段格式必須是 HH:MM，收到：{value!r}") from exc
+    if not 0 <= total <= 24 * 60:
+        raise ValueError(f"時段超出範圍：{value!r}")
+    return total
+
+
+def window_text(weekdays: Sequence[int], window: Sequence[str]) -> str:
+    """把活躍時段轉成人看得懂的文字，例如「週一~週五 13:00–20:55（UTC）」。"""
+    days = sorted(int(day) for day in weekdays)
+    if len(days) == 7:
+        day_text = "每天"
+    elif days == list(WEEKDAYS_WEEKDAY):
+        day_text = "週一~週五"
     else:
-        lines.append(
-            f"最近一次 workflow_dispatch 距今約 {age_minutes:.1f} 分鐘"
-            f"（門檻 {max_silence_minutes} 分鐘）。"
+        day_text = "週" + "、".join(WEEKDAY_NAMES[day] for day in days)
+    return f"{day_text} {window[0]}–{window[1]}（UTC）"
+
+
+def is_within_window(now: datetime, weekdays: Sequence[int], window: Sequence[str]) -> bool:
+    """現在是否落在該 workflow 的活躍時段內（假設時段不跨日）。"""
+    if now.weekday() not in tuple(int(day) for day in weekdays):
+        return False
+    minutes = now.hour * 60 + now.minute
+    return parse_hhmm(window[0]) <= minutes <= parse_hhmm(window[1])
+
+
+def check_started(
+    now: datetime,
+    weekdays: Sequence[int],
+    window: Sequence[str],
+    grace_minutes: int,
+) -> bool:
+    """活躍時段是否已開始且過了寬容期（避免時段一開始就拿昨天的舊紀錄誤報）。"""
+    if now.weekday() not in tuple(int(day) for day in weekdays):
+        return False
+    minutes = now.hour * 60 + now.minute
+    return minutes >= parse_hhmm(window[0]) + max(0, int(grace_minutes))
+
+
+def latest_dispatch_at(runs) -> Optional[datetime]:
+    """從 API 回應取出最近一次 workflow_dispatch 的建立時間；查無資料回 None。"""
+    items = (runs or {}).get("workflow_runs") or []
+    stamps = [parse_timestamp(item.get("created_at")) for item in items]
+    stamps = [ts for ts in stamps if ts is not None]
+    return max(stamps) if stamps else None
+
+
+ALERT_HEADER = "[警示] 外部觸發器疑似斷線（cron-job.org workflow_dispatch）"
+
+
+def workflow_actions_url(repo: str, workflow_file: str) -> str:
+    """該 workflow 在 GitHub Actions 頁面的網址（方便點進去看歷史）。"""
+    return f"https://github.com/{repo}/actions/workflows/{workflow_file}"
+
+
+def _silence_line(item: Dict[str, object], max_silence_minutes: int) -> str:
+    """單一 workflow 的斷線摘要（一行）。"""
+    age = item.get("age")
+    if age is None:
+        detail = "查不到任何 workflow_dispatch 執行紀錄（可能從未成功觸發）"
+    else:
+        detail = (
+            f"最近一次 workflow_dispatch 距今約 {float(age):.1f} 分鐘"
+            f"（門檻 {max_silence_minutes} 分鐘）"
         )
+    label = str(item.get("name") or "外部觸發器")
+    workflow = str(item.get("workflow") or "")
+    return f"{label}（{workflow}）：{detail}" if workflow else f"{label}：{detail}"
+
+
+def _remediation_lines(repo: str) -> List[str]:
+    """共用的排錯步驟（純文字，不使用 emoji / Markdown）。"""
+    return [
+        "可能原因：cron-job.org 的 GitHub PAT 已過期／被撤銷、權限不足，"
+        "或 job 已被自動停用（Inactive）。",
+        "處理步驟：",
+        "1. 登入 cron-job.org → 該 job 的 History 查看失敗的 HTTP 狀態碼"
+        "（401=PAT 過期／403=權限不足／404=URL 或 repo 權限範圍錯誤／"
+        "422=workflow 未啟用或 ref 分支不存在）",
+        "2. 把三個 job 的 Method（POST）、URL（.../actions/workflows/<檔名>/dispatches）、"
+        "Request body（{\"ref\":\"master\"}）、Authorization header 逐欄比對"
+        "（以加密貨幣 job 為正常樣板）",
+        "3. 若為 401／403，產生新的 fine-grained PAT"
+        "（Permissions → Actions: Read and write；Repository access 勾選本 repo）",
+        "4. 修正後按 Test run now，確認回應 HTTP 204；被停用的 job 記得重新 Enable"
+        "（並開啟 Notify on failure）",
+        "5. 本機可先執行 `python dispatch_check.py`，用同一組 PAT／URL 確認會拿到 204",
+        f"6. 到 GitHub Actions 確認三個 workflow 都建立了新的 workflow_dispatch run"
+        f"（repo：{repo}）",
+        "詳見 README「外部觸發（cron-job.org）」。",
+    ]
+
+
+def build_silent_message(
+    silent: Sequence[Dict[str, object]],
+    max_silence_minutes: int,
+    repo: str,
+) -> str:
+    """組出斷線告警文字：逐一指名哪個 workflow 在活躍時段內沒有觸發紀錄。"""
+    lines = [ALERT_HEADER, ""]
+    lines.append(f"偵測到 {len(silent)} 個 workflow 在活躍時段內沒有即時的外部觸發紀錄：")
+    for item in silent:
+        lines.append(f"- {_silence_line(item, max_silence_minutes)}")
+        if item.get("window_text"):
+            lines.append(f"  活躍時段：{item['window_text']}")
+        if item.get("last_run_text"):
+            lines.append(f"  最近一次紀錄：{item['last_run_text']}")
+        if item.get("actions_url"):
+            lines.append(f"  Actions：{item['actions_url']}")
     lines.append(f"repo：{repo}")
     lines.append("")
-    lines.append("可能原因：cron-job.org 的 GitHub PAT 已過期／被撤銷，或 job 被停用。")
-    lines.append("處理步驟：")
-    lines.append("1. 登入 cron-job.org，逐一檢查三個 job 的 Authorization token")
-    lines.append("2. 更新為有效的 fine-grained PAT（權限：Actions: Read and write）")
-    lines.append("3. 各 job 按 Test run now，確認回應為 HTTP 204")
-    lines.append("4. 到 GitHub Actions 確認已建立新的 workflow_dispatch run")
-    lines.append("詳見 README「外部觸發（cron-job.org）」。")
+    lines.extend(_remediation_lines(repo))
     return "\n".join(lines)
 
 
-def fetch_dispatch_runs(repo: str, token: str, api_url: str, per_page: int = 1) -> dict:
-    """取得本 repo 最近的 workflow_dispatch 執行紀錄（GET /repos/{owner}/{repo}/actions/runs）。"""
-    url = f"{api_url.rstrip('/')}/repos/{repo}/actions/runs"
+def build_alert_message(
+    age_minutes: Optional[float],
+    max_silence_minutes: int,
+    repo: str,
+    workflow_name: Optional[str] = None,
+) -> str:
+    """單一 workflow 的斷線告警文字（保留原本簽章，新增選用的 workflow 名稱）。"""
+    item: Dict[str, object] = {
+        "name": workflow_name or "外部觸發器",
+        "workflow": "",
+        "age": age_minutes,
+    }
+    return build_silent_message([item], max_silence_minutes, repo)
+
+
+def evaluate_silence(
+    now: datetime,
+    runs_by_workflow: Dict[str, dict],
+    max_silence_minutes: int,
+    grace_minutes: Optional[int] = None,
+    workflows: Sequence[Dict[str, object]] = tuple(WORKFLOWS),
+) -> List[Dict[str, object]]:
+    """找出「在活躍時段內卻沒有即時觸發紀錄」的 workflow（純函式，方便測試）。
+
+    只檢查 runs_by_workflow 內有提供資料的 workflow——查詢失敗的不要誤判成斷線。
+    """
+    grace = max_silence_minutes if grace_minutes is None else grace_minutes
+    silent: List[Dict[str, object]] = []
+    for wf in workflows:
+        file_name = str(wf["file"])
+        if file_name not in runs_by_workflow:
+            continue
+        weekdays = wf["weekdays"]
+        window = wf["window"]
+        if not is_within_window(now, weekdays, window):
+            continue
+        if not check_started(now, weekdays, window, grace):
+            logger.debug("%s 活躍時段剛開始（寬容期 %s 分鐘），暫不判定", wf["name"], grace)
+            continue
+        runs = runs_by_workflow[file_name]
+        age = latest_dispatch_age_minutes(runs, now=now)
+        if not should_alert(age, max_silence_minutes):
+            continue
+        last_at = latest_dispatch_at(runs)
+        silent.append(
+            {
+                "name": wf["name"],
+                "workflow": file_name,
+                "age": age,
+                "last_run_text": last_at.strftime("%Y-%m-%d %H:%M UTC") if last_at else "查不到紀錄",
+                "window_text": window_text(weekdays, window),
+            }
+        )
+    return silent
+
+
+def select_workflows(
+    spec: Optional[str] = None,
+    workflows: Sequence[Dict[str, object]] = tuple(WORKFLOWS),
+) -> List[Dict[str, object]]:
+    """依 `HEALTHCHECK_WORKFLOWS`（逗號分隔檔名）挑選要檢查的 workflow；空值＝全部。"""
+    names = [part.strip() for part in (spec or "").split(",") if part.strip()]
+    if not names:
+        return list(workflows)
+    by_basename = {os.path.basename(str(wf["file"])): wf for wf in workflows}
+    selected: List[Dict[str, object]] = []
+    for name in names:
+        match = by_basename.get(os.path.basename(name.replace("\\", "/")))
+        if match is None:
+            logger.warning("HEALTHCHECK_WORKFLOWS 指定的 %s 不在已知清單中，已忽略", name)
+            continue
+        if match not in selected:
+            selected.append(match)
+    return selected or list(workflows)
+
+
+def fetch_workflow_dispatch_runs(
+    repo: str,
+    token: str,
+    api_url: str,
+    workflow_file: str,
+    per_page: int = 1,
+) -> dict:
+    """取得**單一 workflow** 最近的 workflow_dispatch 執行紀錄。
+
+    GET /repos/{owner}/{repo}/actions/workflows/{workflow_file}/runs
+    """
+    file_name = os.path.basename(str(workflow_file).strip().replace("\\", "/"))
+    url = f"{api_url.rstrip('/')}/repos/{repo}/actions/workflows/{file_name}/runs"
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": GITHUB_API_VERSION,
@@ -141,34 +369,91 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
-def main() -> int:
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="外部觸發器（cron-job.org workflow_dispatch）健康檢查",
+    )
+    parser.add_argument(
+        "--no-notify",
+        "--dry-run",
+        dest="notify",
+        action="store_false",
+        help="只印出檢查結果，不發送 Telegram 告警（本機測試用）",
+    )
+    parser.set_defaults(notify=True)
+    return parser
+
+
+def main(argv: Optional[Sequence[str]] = None, now: Optional[datetime] = None) -> int:
+    args = build_arg_parser().parse_args(argv)
     repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
     token = (os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or "").strip()
     api_url = os.environ.get("GITHUB_API_URL", DEFAULT_GITHUB_API_URL).strip() or DEFAULT_GITHUB_API_URL
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
     max_silence = _env_int("CRONJOB_MAX_SILENCE_MINUTES", DEFAULT_MAX_SILENCE_MINUTES)
+    grace = _env_int("CRONJOB_GRACE_MINUTES", max_silence)
+    workflows = select_workflows(os.environ.get("HEALTHCHECK_WORKFLOWS"))
 
     if not repo:
-        logger.error("缺少 GITHUB_REPOSITORY（Actions 會自動提供；本機測試請自行設定，例如 liam001-middleman/IndexAlertBot-Python）")
-        return 2
-
-    try:
-        runs = fetch_dispatch_runs(repo, token, api_url)
-    except Exception as exc:  # noqa: BLE001 - 任何查詢失敗都不該誤判成「斷線」
-        logger.error("查詢 GitHub Actions 執行紀錄失敗（為避免誤報，不發出告警）: %s", exc)
-        return 2
-
-    age_minutes = latest_dispatch_age_minutes(runs)
-    if not should_alert(age_minutes, max_silence):
-        logger.info(
-            "外部觸發器正常：最近一次 workflow_dispatch 距今 %.1f 分鐘（門檻 %d 分鐘）",
-            age_minutes, max_silence,
+        logger.error(
+            "缺少 GITHUB_REPOSITORY（Actions 會自動提供；本機測試請自行設定，"
+            "例如 liam001-middleman/IndexAlertBot-Python）"
         )
+        return 2
+
+    now = now or datetime.now(timezone.utc)
+    logger.info("檢查時間 %s（活躍時段外或寬容期內不判定）", now.strftime("%Y-%m-%d %H:%M UTC"))
+
+    runs_by_workflow: Dict[str, dict] = {}
+    failed_queries: List[str] = []
+    for wf in workflows:
+        file_name = str(wf["file"])
+        try:
+            runs_by_workflow[file_name] = fetch_workflow_dispatch_runs(repo, token, api_url, file_name)
+        except Exception as exc:  # noqa: BLE001 - 查詢失敗不該誤判成「斷線」
+            failed_queries.append(file_name)
+            logger.error("查詢 %s 的執行紀錄失敗（略過該 workflow，不判定為斷線）: %s", file_name, exc)
+
+    if not runs_by_workflow:
+        logger.error("所有 workflow 的執行紀錄查詢都失敗（為避免誤報，不發出告警）")
+        return 2
+
+    for wf in workflows:
+        runs = runs_by_workflow.get(str(wf["file"]))
+        if runs is None:
+            continue
+        age = latest_dispatch_age_minutes(runs, now=now)
+        age_text = f"{age:.1f} 分鐘" if age is not None else "查不到紀錄"
+        logger.info(
+            "%s：最近一次 workflow_dispatch 距今 %s（門檻 %d 分鐘；活躍時段 %s）",
+            wf["name"],
+            age_text,
+            max_silence,
+            window_text(wf["weekdays"], wf["window"]),
+        )
+
+    silent = evaluate_silence(
+        now,
+        runs_by_workflow,
+        max_silence,
+        grace_minutes=grace,
+        workflows=workflows,
+    )
+    if not silent:
+        logger.info("外部觸發器正常：活躍時段內的 workflow 都有即時的外部觸發紀錄。")
+        if failed_queries:
+            logger.warning("注意：%s 的查詢失敗，本次未納入判定。", "、".join(failed_queries))
         return 0
 
-    message = build_alert_message(age_minutes, max_silence, repo)
+    for item in silent:
+        item["actions_url"] = workflow_actions_url(repo, str(item["workflow"]))
+
+    message = build_silent_message(silent, max_silence, repo)
     logger.warning("%s", message)
+    if not args.notify:
+        logger.info("（--no-notify）略過 Telegram 告警發送")
+        return 1
     try:
         send_telegram_message(bot_token, chat_id, message)
         logger.info("已發出 Telegram 斷線告警")
