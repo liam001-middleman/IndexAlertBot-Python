@@ -22,8 +22,8 @@
   },
   "TSLA": {
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 4.073383788081836,
+      "status": "clear",
+      "last_value": 2.6238930159764915,
       "triggered_at": "2026-10-09T18:34:33.174182+00:00"
     },
     "ma_deviation_neg_200": {
@@ -123,8 +123,8 @@
       "triggered_at": "2026-09-17T14:25:41.068519+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.2792485314866684,
+      "status": "clear",
+      "last_value": 0.7655635352231779,
       "triggered_at": "2026-09-28T15:30:56.727020+00:00"
     },
     "ma_deviation_pos_60": {
@@ -145,8 +145,8 @@
       "triggered_at": "2026-10-07T19:07:38.814237+00:00"
     },
     "__last_report__": {
-      "price": 1079.81494140625,
-      "at": "2026-10-07T19:07:43.037103+00:00"
+      "price": 993.27001953125,
+      "at": "2026-10-12T15:40:15.853452+00:00"
     },
     "ma_deviation_neg_60": {
       "status": "clear",
@@ -169,9 +169,9 @@
       "triggered_at": "2026-09-14T21:35:27.599784+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "clear",
-      "last_value": 0.9871732850015627,
-      "triggered_at": "2026-09-16T18:55:37.174961+00:00"
+      "status": "active",
+      "last_value": -4.650685247456378,
+      "triggered_at": "2026-10-12T15:40:09.350465+00:00"
     }
   },
   "ORCL": {
@@ -263,8 +263,8 @@
       "triggered_at": "2026-10-06T01:32:52.030758+00:00"
     },
     "__last_report__": {
-      "price": 10.039999961853027,
-      "at": "2026-10-08T19:03:58.528813+00:00"
+      "price": 10.045000076293945,
+      "at": "2026-10-12T15:40:15.853452+00:00"
     },
     "intraday_drop": {
       "status": "clear",
@@ -272,9 +272,9 @@
       "triggered_at": "2026-10-08T19:03:54.410216+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "clear",
-      "last_value": -2.8596036330034895,
-      "triggered_at": "2026-10-08T19:03:54.410216+00:00"
+      "status": "active",
+      "last_value": -3.596535346239693,
+      "triggered_at": "2026-10-12T15:40:09.350465+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "clear",
@@ -299,8 +299,8 @@
       "triggered_at": "2026-09-28T12:08:00.286119+00:00"
     },
     "us10y_surge": {
-      "status": "active",
-      "last_value": 52.0,
+      "status": "clear",
+      "last_value": 27.0,
       "triggered_at": "2026-09-28T13:15:46.782682+00:00"
     },
     "fed_rate_change": {
