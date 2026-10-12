@@ -19,6 +19,7 @@ class Quote:
     ma: dict = field(default_factory=dict)  # {"20": 值, "60": 值, "200": 值}
     ma_deviation_pct: dict = field(default_factory=dict)  # 乖離率（%）
     timestamp: datetime = field(default_factory=datetime.utcnow)
+    usd_twd: Optional[float] = None  # 本回合的 USD/TWD 匯率（us/crypto 雙幣別顯示用）
 
 
 @dataclass
@@ -41,6 +42,7 @@ class Alert:
     ma_deviation_pct: dict = field(default_factory=dict)  # 對各 MA 的乖離率（%）
     last_report_price: Optional[float] = None  # 上次出報告時的價格（報告比較用）
     last_report_at: Optional[str] = None  # 上次出報告時間（ISO 字串）
+    usd_twd: Optional[float] = None  # 本回合的 USD/TWD 匯率（us/crypto 雙幣別顯示用）
     triggered_at: datetime = field(default_factory=datetime.utcnow)
 
 

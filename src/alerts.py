@@ -7,9 +7,10 @@
    並同步更新狀態（觸發→active，解除→clear）。
 """
 from datetime import datetime, timezone
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from .config import AlertConfig
+from .currency import format_price, format_price_dual
 from .models import Alert, Quote
 from .state import StateStore
 
@@ -37,6 +38,19 @@ def _fmt(value: float) -> str:
     return f"{value:.2f}"
 
 
+def _fmt_price(quote: Quote, value: Optional[float], dual: bool = False) -> str:
+    """價格字串：us / crypto 以「美金（台幣）」呈現，台股維持台幣。
+
+    dual=True（現價用）會附上「約 X 台幣」；其餘數值只標示顯示幣別，
+    讓同一句裡的現價、前收、MA 都用同一個幣別，不會出現兩種幣別打架。
+    """
+    if value is None:
+        return "N/A"
+    if dual:
+        return format_price_dual(value, quote.market, quote.usd_twd)
+    return format_price(value, quote.market, quote.usd_twd)
+
+
 def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
     """評估所有警報條件，回傳條件結果清單（不做狀態比對）。
 
@@ -54,9 +68,9 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                 "value": quote.rsi,
                 "threshold": cfg.rsi_overbought,
                 "severity": "warning",
-                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超買",
+                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超買",
                 "detail": (
-                    f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
+                    f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，"
                     f"RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
                     f"已達超買門檻 {_fmt(cfg.rsi_overbought)}"
                 ),
@@ -70,9 +84,9 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                 "value": quote.rsi,
                 "threshold": cfg.rsi_oversold,
                 "severity": "warning",
-                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超賣",
+                "message": f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，RSI({cfg.rsi_period}) {_fmt(quote.rsi)}，超賣",
                 "detail": (
-                    f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
+                    f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，"
                     f"RSI({cfg.rsi_period}) 為 {_fmt(quote.rsi)}，"
                     f"已達超賣門檻 {_fmt(cfg.rsi_oversold)}"
                 ),
@@ -89,8 +103,8 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
             "severity": "critical",
             "message": f"{quote.name}（{quote.symbol}）日內漲幅 {quote.change_pct:+.1f}%",
             "detail": (
-                f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
-                f"對比前收 {_fmt(quote.previous_close)}，漲幅 {quote.change_pct:+.1f}%，"
+                f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，"
+                f"對比前收 {_fmt_price(quote, quote.previous_close)}，漲幅 {quote.change_pct:+.1f}%，"
                 f"超過 {_fmt(cfg.intraday_change_pct)}% 門檻"
             ),
         }
@@ -105,8 +119,8 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
             "severity": "critical",
             "message": f"{quote.name}（{quote.symbol}）日內跌幅 {quote.change_pct:+.1f}%",
             "detail": (
-                f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)}，"
-                f"對比前收 {_fmt(quote.previous_close)}，跌幅 {quote.change_pct:+.1f}%，"
+                f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)}，"
+                f"對比前收 {_fmt_price(quote, quote.previous_close)}，跌幅 {quote.change_pct:+.1f}%，"
                 f"超過 {_fmt(cfg.intraday_change_pct)}% 門檻"
             ),
         }
@@ -131,8 +145,8 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                     "message": f"{quote.name}（{quote.symbol}）MA{window} "
                                f"{'正' if positive else '負'}乖離 {dev:+.1f}%",
                     "detail": (
-                        f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)} 對比 "
-                        f"MA{window} {_fmt(ma_value) if ma_value else 'N/A'}，乖離率 {dev:+.1f}%"
+                        f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)} 對比 "
+                        f"MA{window} {_fmt_price(quote, ma_value) if ma_value else 'N/A'}，乖離率 {dev:+.1f}%"
                         + (f"，已達{'正' if positive else '負'}乖離門檻 {_fmt(cfg.ma_deviation_pct)}%"
                            if triggered else "")
                     ),
@@ -163,11 +177,11 @@ def evaluate_conditions(quote: Quote, cfg: AlertConfig) -> List[dict]:
                         "value": dev,
                         "threshold": band,
                         "severity": "info",
-                        "message": f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)} "
+                        "message": f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)} "
                                    f"{verb} MA{window} {dev:+.1f}%",
                         "detail": (
-                            f"{quote.name}（{quote.symbol}）現價 {_fmt(quote.price)} {verb} "
-                            f"MA{window} {_fmt(ma_value) if ma_value else 'N/A'}，"
+                            f"{quote.name}（{quote.symbol}）現價 {_fmt_price(quote, quote.price, dual=True)} {verb} "
+                            f"MA{window} {_fmt_price(quote, ma_value) if ma_value else 'N/A'}，"
                             f"乖離率 {dev:+.1f}%{band_txt}"
                         ),
                     }
@@ -215,6 +229,7 @@ def get_new_alerts(
                             ma_deviation_pct=quote.ma_deviation_pct,
                             last_report_price=last_report.get("price"),
                             last_report_at=last_report.get("at"),
+                            usd_twd=quote.usd_twd,
                             triggered_at=now,
                         )
                     )

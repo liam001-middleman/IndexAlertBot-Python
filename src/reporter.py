@@ -4,6 +4,7 @@ from typing import List
 
 import requests
 
+from .currency import convert_value, display_currency, format_price, format_price_dual
 from .models import Alert
 
 logger = logging.getLogger(__name__)
@@ -17,10 +18,13 @@ SYSTEM_PROMPT = (
     "1. 開頭一行總覽：幾檔標的、幾則警報、最大風險類別。\n"
     "2. 每個標的獨立一個區塊，依嚴重度排序（critical > warning > info）：\n"
     "   第一行：標的名稱（代號，代號請用可讀格式，例如 ethtwd 寫成 ETH/TWD）\n"
-    "   第二行：現價（必列，任何警報都要有現價）\n"
+    "   第二行：現價（必列，任何警報都要有現價；使用者提供的「X 美金（約 Y 台幣）」要原樣保留"
+    "兩個數字與兩種幣別，不得只留其中一種、也不得自行換算匯率）\n"
     "   第三行：RSI（若使用者有提供該資料：RSI(14)：xxx；無則省略此行）\n"
-    "   第四行：上次報告價格（若使用者有提供該資料：上次報告價格：xxx（較上次 +x.xx%）；無則省略此行）\n"
-    "   第五行：均線（若使用者有提供該資料：均線：MA20=xxx（乖離 +x.xx%）、MA60=xxx（乖離 +x.xx%）、MA200=xxx（乖離 +x.xx%））\n"
+    "   第四行：上次報告價格（若使用者有提供該資料：上次報告價格：xxx（較上次 +x.xx%）；"
+    "幣別照抄使用者提供的，百分比已由程式算好，直接照抄；無則省略此行）\n"
+    "   第五行：均線（若使用者有提供該資料：均線（幣別）：MA20=xxx（乖離 +x.xx%）、"
+    "MA60=xxx（乖離 +x.xx%）、MA200=xxx（乖離 +x.xx%）；幣別沿用使用者標示的，不得改寫）\n"
     "   之後：每一則警報一行（警報名稱＋指標數值＋門檻）\n"
     "   最後：1~2 句簡短風險說明\n"
     "3. 不要使用任何 Markdown 符號（如 **、##、-、*）、不要使用 emoji、不要畫表格與分隔線。\n"
@@ -34,6 +38,8 @@ SYSTEM_PROMPT = (
     "也不得補上未提供的相關係數、歷史勝率或機率。\n"
     "9. 總體環境背景中的數字只能引用列出的項目；未列出的（市場預期、未來利率路徑、"
     "下一期數據）一律不得推測，也不得出現在報告中。\n"
+    "10. 幣別只能照抄使用者提供的內容（例如「82001.21 美金（約 2574838.00 台幣）」）；"
+    "不得自行換算匯率、不得改寫成其他幣別，也不得補上使用者未提供的匯率或幣別數字。\n"
 )
 
 
@@ -42,25 +48,41 @@ class ReporterError(Exception):
 
 
 def _format_ma(a: Alert) -> str:
-    """把 Alert 的均線資料格式化成一行：MA20=xxx（乖離 +x.xx%）、MA60=...。"""
+    """把 Alert 的均線資料格式化成一行：MA20=xxx（乖離 +x.xx%）、MA60=...。
+
+    MA 數值用「顯示幣別」呈現（crypto 的分析基準是台幣，顯示時換成美金）。
+    乖離率與幣別無關，直接沿用。
+    """
     parts = []
     for period in sorted(a.ma, key=int):
         ma_val = a.ma[period]
         if ma_val is None:
             continue
+        shown = convert_value(ma_val, a.market, a.usd_twd)
         dev = a.ma_deviation_pct.get(period)
         dev_txt = f"{dev:+.2f}%" if dev is not None else "N/A"
-        parts.append(f"MA{period}={ma_val:.2f}（乖離 {dev_txt}）")
+        parts.append(f"MA{period}={shown:.2f}（乖離 {dev_txt}）")
     return "、".join(parts)
 
 
+def _format_ma_line(a: Alert) -> str:
+    """均線一行（含顯示幣別）：均線（美金）：MA20=xxx（乖離 +x.xx%）...。"""
+    txt = _format_ma(a)
+    if not txt:
+        return ""
+    return f"均線（{display_currency(a.market, a.usd_twd)}）：{txt}"
+
+
 def _format_last_report(a: Alert) -> str:
-    """把上次報告價格格式化成一行：上次報告價格：xxx（較上次 +x.xx%）。"""
+    """把上次報告價格格式化成一行：上次報告價格：xxx 美金（較上次 +x.xx%）。
+
+    上次價格與現價同一幣別；百分比由程式算好，不讓 LLM 自己減。
+    """
     if a.last_report_price is None:
         return ""
     prev = float(a.last_report_price)
     change = (a.price - prev) / prev * 100.0 if prev else 0.0
-    return f"上次報告價格：{prev:.2f}（較上次 {change:+.2f}%）"
+    return f"上次報告價格：{format_price(prev, a.market, a.usd_twd)}（較上次 {change:+.2f}%）"
 
 
 MACRO_ALERT_HEADER = "新觸發總體警報（程式判定，只能照抄數值）："
@@ -83,14 +105,15 @@ def build_user_prompt(alerts: List[Alert], macro_alert_lines: List[str] = None,
         lines.append("")
         lines.append(f"標的：{a.name}（{a.symbol}，{a.market}）")
         lines.append(f"嚴重度：{a.severity}")
-        lines.append(f"現價：{a.price:.2f}")
+        lines.append(f"現價：{format_price_dual(a.price, a.market, a.usd_twd)}")
         if a.rsi is not None:
             lines.append(f"RSI：{a.rsi:.1f}")
-        if a.last_report_price is not None:
-            lines.append(f"上次報告價格：{a.last_report_price:.2f}")
-        ma_txt = _format_ma(a)
+        last_txt = _format_last_report(a)
+        if last_txt:
+            lines.append(last_txt)
+        ma_txt = _format_ma_line(a)
         if ma_txt:
-            lines.append(f"均線：{ma_txt}")
+            lines.append(ma_txt)
         lines.append(f"警報：{a.alert_name}")
         lines.append(f"內容：{a.detail}")
     for header, block in ((MACRO_ALERT_HEADER, macro_alert_lines),
@@ -175,9 +198,9 @@ def build_fallback_report(alerts: List[Alert], macro_alert_lines: List[str] = No
         lines.append(a.detail)
         if a.rsi is not None:
             lines.append(f"RSI：{a.rsi:.1f}")
-        ma_txt = _format_ma(a)
+        ma_txt = _format_ma_line(a)
         if ma_txt:
-            lines.append(f"均線：{ma_txt}")
+            lines.append(ma_txt)
         last_txt = _format_last_report(a)
         if last_txt:
             lines.append(last_txt)

@@ -10,7 +10,8 @@ from src.state import StateStore
 
 
 def make_quote(symbol="AAPL", name="蘋果", market="us", price=100.0,
-               previous_close=95.0, change_pct=5.0, rsi=75.0, ma_dev=None):
+               previous_close=95.0, change_pct=5.0, rsi=75.0, ma_dev=None,
+               usd_twd=None):
     return Quote(
         symbol=symbol,
         name=name,
@@ -23,18 +24,21 @@ def make_quote(symbol="AAPL", name="蘋果", market="us", price=100.0,
         ma={"20": 95.0, "60": 90.0, "200": 80.0},
         ma_deviation_pct=ma_dev or {"20": 5.26, "60": 11.11, "200": 25.0},
         timestamp=datetime.now(timezone.utc),
+        usd_twd=usd_twd,
     )
 
 
-def make_cfg():
+def make_cfg(**kwargs):
     # 高門檻，讓測試只專注在 RSI 條件上
-    return AlertConfig(
+    base = dict(
         rsi_period=14,
         rsi_overbought=70.0,
         rsi_oversold=30.0,
         intraday_change_pct=100.0,
         ma_deviation_pct=100.0,
     )
+    base.update(kwargs)
+    return AlertConfig(**base)
 
 
 def test_new_trigger_only_once(tmp_path):
@@ -256,3 +260,67 @@ def test_ma_cross_coexists_with_deviation_alert(tmp_path):
 
     alerts = get_new_alerts([make_quote(ma_dev=only_ma_dev(6.0))], lambda m: cfg, state)
     assert {a.alert_type for a in alerts} == {"ma_cross_up_20", "ma_deviation_pos_20"}
+
+
+def test_alert_detail_uses_usd_twd_for_crypto(tmp_path):
+    """加密貨幣（分析基準＝台幣）的警報內文要換成「美金（約 X 台幣）」。"""
+    state = StateStore(tmp_path / "alert_state.json")
+    state.load()
+    cfg = make_cfg()
+
+    alerts = get_new_alerts(
+        [make_quote(symbol="btctwd", name="比特幣", market="crypto",
+                    price=2574838.0, rsi=75.0, usd_twd=31.4)],
+        lambda m: cfg, state,
+    )
+    assert len(alerts) == 1
+    alert = alerts[0]
+    assert alert.usd_twd == 31.4
+    assert "現價 82001.21 美金（約 2574838.00 台幣）" in alert.detail
+    assert "現價 82001.21 美金（約 2574838.00 台幣）" in alert.message
+
+
+def test_alert_detail_falls_back_to_twd_without_rate(tmp_path):
+    """沒有匯率就不得顯示美金（數字其實是台幣）。"""
+    state = StateStore(tmp_path / "alert_state.json")
+    state.load()
+    cfg = make_cfg()
+
+    alerts = get_new_alerts(
+        [make_quote(symbol="btctwd", name="比特幣", market="crypto", price=2574838.0, rsi=75.0)],
+        lambda m: cfg, state,
+    )
+    assert alerts[0].usd_twd is None
+    assert "現價 2574838.00 台幣" in alerts[0].detail
+
+
+def test_alert_detail_keeps_twd_for_tw_market(tmp_path):
+    """台股維持台幣，同一句的現價與前收用同一幣別。"""
+    state = StateStore(tmp_path / "alert_state.json")
+    state.load()
+    cfg = make_cfg(intraday_change_pct=1.0)
+
+    alerts = get_new_alerts(
+        [make_quote(symbol="2330.TW", name="台積電", market="tw",
+                    price=1080.0, previous_close=1075.0, change_pct=1.5,
+                    rsi=50.0, usd_twd=31.4)],
+        lambda m: cfg, state,
+    )
+    assert [a.alert_type for a in alerts] == ["intraday_surge"]
+    assert "現價 1080.00 台幣，對比前收 1075.00 台幣" in alerts[0].detail
+
+
+def test_alert_detail_converts_ma_value_to_usd(tmp_path):
+    """MA 數值同樣要跟著顯示幣別換算。"""
+    state = StateStore(tmp_path / "alert_state.json")
+    state.load()
+    cfg = make_cross_cfg()
+
+    alerts = get_new_alerts(
+        [make_quote(symbol="btctwd", name="比特幣", market="crypto", price=100.0,
+                    rsi=50.0, ma_dev=only_ma_dev(6.0), usd_twd=31.4)],
+        lambda m: cfg, state,
+    )
+    assert [a.alert_type for a in alerts] == ["ma_cross_up_20"]
+    # MA20 = 95.0（台幣）→ 95 / 31.4 = 3.03 美金
+    assert "現價 3.18 美金（約 100.00 台幣） 站上 MA20 3.03 美金" in alerts[0].detail

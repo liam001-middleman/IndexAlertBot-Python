@@ -37,7 +37,8 @@ for _stream in (sys.stdout, sys.stderr):
 from src.alerts import get_new_alerts
 from src.config import load_config
 from src.correlations import compute_correlations, detect_divergences, format_correlation_lines
-from src.fetcher import FetchError, get_market_data
+from src.currency import USD_MARKETS
+from src.fetcher import FetchError, get_market_data, get_usd_twd_rate
 from src.indicators import compute_ma, compute_ma_deviation, compute_rsi
 from src.macro import build_macro_lines, load_snapshot, refresh_snapshot, save_snapshot
 from src.macro_alerts import format_macro_alert_lines, get_new_macro_alerts
@@ -64,6 +65,11 @@ def build_quote(asset, md, cfg) -> Quote:
     rsi = compute_rsi(close, cfg.rsi_period)
     ma = compute_ma(close, cfg.ma_periods)
     deviation = compute_ma_deviation(md.price, ma)
+    # us / crypto 需要 USD/TWD 匯率才能同時顯示美金與台幣；
+    # crypto 的換匯路徑會順手帶回（md.usd_twd），美股則共用同一份快取。
+    usd_twd = md.usd_twd
+    if usd_twd is None and asset.market in USD_MARKETS:
+        usd_twd = get_usd_twd_rate()
     return Quote(
         symbol=asset.symbol,
         name=asset.name,
@@ -76,6 +82,7 @@ def build_quote(asset, md, cfg) -> Quote:
         ma=ma,
         ma_deviation_pct=deviation,
         timestamp=md.timestamp,
+        usd_twd=usd_twd,
     )
 
 
