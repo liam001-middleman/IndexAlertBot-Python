@@ -17,8 +17,8 @@
   },
   "2317.TW": {
     "ma_deviation_pos_200": {
-      "status": "active",
-      "last_value": 9.851305613849233,
+      "status": "clear",
+      "last_value": 4.688713375883008,
       "triggered_at": "2026-08-28T13:37:43.498894+00:00"
     }
   },
@@ -79,8 +79,8 @@
       "at": "2026-09-30T02:15:50.548605+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.095194922937448,
+      "status": "clear",
+      "last_value": 3.0762209036969463,
       "triggered_at": "2026-09-30T02:05:37.309126+00:00"
     },
     "ma_deviation_neg_60": {
@@ -141,8 +141,8 @@
       "at": "2026-10-09T07:04:33.790630+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 71.60416966795088,
+      "status": "clear",
+      "last_value": 67.99954501497747,
       "triggered_at": "2026-10-09T07:04:27.804277+00:00"
     }
   },
@@ -183,8 +183,8 @@
       "at": "2026-10-09T07:04:33.790630+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 71.92139780955259,
+      "status": "clear",
+      "last_value": 69.38039522061426,
       "triggered_at": "2026-10-09T07:04:27.804277+00:00"
     },
     "ma_deviation_pos_60": {
