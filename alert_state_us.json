@@ -154,8 +154,8 @@
       "triggered_at": "2026-09-16T19:25:37.221561+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.0930955058581486,
+      "status": "clear",
+      "last_value": 2.970236121735753,
       "triggered_at": "2026-10-12T17:05:39.842899+00:00"
     },
     "intraday_surge": {
@@ -186,8 +186,8 @@
       "triggered_at": "2026-10-12T16:50:39.900367+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -3.0303453872370096,
+      "status": "clear",
+      "last_value": -2.9079603955671227,
       "triggered_at": "2026-10-12T16:45:45.192331+00:00"
     },
     "__last_report__": {
