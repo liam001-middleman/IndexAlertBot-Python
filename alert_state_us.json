@@ -63,9 +63,9 @@
   },
   "NVDA": {
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 2.8811685950064163,
-      "triggered_at": "2026-10-13T14:10:46.847848+00:00"
+      "status": "active",
+      "last_value": 3.017834882274618,
+      "triggered_at": "2026-10-13T16:01:20.260289+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
@@ -73,8 +73,8 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "__last_report__": {
-      "price": 226.1699981689453,
-      "at": "2026-10-13T14:10:51.893861+00:00"
+      "price": 225.97000122070312,
+      "at": "2026-10-13T16:01:24.893247+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
@@ -164,8 +164,8 @@
       "triggered_at": "2026-09-23T13:30:53.866584+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.313231917862466,
+      "status": "clear",
+      "last_value": -4.874419842325843,
       "triggered_at": "2026-10-13T14:55:36.704682+00:00"
     },
     "ma_deviation_neg_20": {
