@@ -6,8 +6,8 @@
       "triggered_at": "2026-09-23T02:20:45.062775+00:00"
     },
     "__last_report__": {
-      "price": 78778.65402930602,
-      "at": "2026-10-12T23:00:59.630309+00:00"
+      "price": 80088.42326545715,
+      "at": "2026-10-13T03:35:41.319455+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
@@ -40,8 +40,8 @@
       "triggered_at": "2026-10-08T15:55:39.010956+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "active",
-      "last_value": -5.616241545073766,
+      "status": "clear",
+      "last_value": -4.932256754320974,
       "triggered_at": "2026-10-12T21:45:32.624850+00:00"
     },
     "ma_cross_down_20": {
@@ -50,9 +50,9 @@
       "triggered_at": "2026-10-08T12:50:40.543978+00:00"
     },
     "ma_cross_up_60": {
-      "status": "clear",
-      "last_value": 0.053218638404760994,
-      "triggered_at": "2026-10-08T19:35:37.869546+00:00"
+      "status": "active",
+      "last_value": 0.8016852766058686,
+      "triggered_at": "2026-10-13T03:35:35.383009+00:00"
     },
     "ma_cross_up_200": {
       "status": "active",
@@ -72,8 +72,8 @@
       "triggered_at": "2026-09-23T13:40:39.471741+00:00"
     },
     "__last_report__": {
-      "price": 2669950.454815328,
-      "at": "2026-10-12T08:15:43.761889+00:00"
+      "price": 2664330.026402235,
+      "at": "2026-10-13T03:35:41.319455+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
@@ -81,9 +81,9 @@
       "triggered_at": "2026-09-02T08:20:39.150670+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 4.792755828629793,
-      "triggered_at": "2026-10-09T01:25:37.938552+00:00"
+      "status": "active",
+      "last_value": 5.484405912869031,
+      "triggered_at": "2026-10-13T03:35:35.383009+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
