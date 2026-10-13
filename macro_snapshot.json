@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-10-13T17:15:39.662507+00:00",
+ "fetched_at": "2026-10-13T18:15:42.455718+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -16,20 +16,20 @@
   },
   "prices": {
    "ok": true,
-   "at": "2026-10-13T17:15:39.301344+00:00",
-   "attempt_at": "2026-10-13T17:15:39.301344+00:00",
+   "at": "2026-10-13T18:15:42.003614+00:00",
+   "attempt_at": "2026-10-13T18:15:42.003614+00:00",
    "error": null
   },
   "fed_rss": {
    "ok": true,
-   "at": "2026-10-13T17:15:39.470114+00:00",
-   "attempt_at": "2026-10-13T17:15:39.470114+00:00",
+   "at": "2026-10-13T18:15:42.163966+00:00",
+   "attempt_at": "2026-10-13T18:15:42.163966+00:00",
    "error": null
   },
   "news": {
    "ok": true,
-   "at": "2026-10-13T17:15:39.662413+00:00",
-   "attempt_at": "2026-10-13T17:15:39.662413+00:00",
+   "at": "2026-10-13T18:15:42.455572+00:00",
+   "attempt_at": "2026-10-13T18:15:42.455572+00:00",
    "error": null
   }
  },
@@ -183,11 +183,11 @@
   "fed_funds_changed_at": "2026-09-16"
  },
  "prices": {
-  "^TNX": 5.234,
-  "DX-Y.NYB": 102.275,
-  "CL=F": 94.39,
-  "GC=F": 4176.3999,
-  "^VIX": 15.49
+  "^TNX": 5.221,
+  "DX-Y.NYB": 102.236,
+  "CL=F": 94.18,
+  "GC=F": 4174.8999,
+  "^VIX": 15.53
  },
  "history": {
   "^TNX": {
@@ -373,7 +373,7 @@
     5.231,
     5.244,
     5.24,
-    5.234
+    5.221
    ]
   },
   "DX-Y.NYB": {
@@ -559,7 +559,7 @@
     102.14,
     102.21,
     102.58,
-    102.275
+    102.236
    ]
   },
   "CL=F": {
@@ -745,7 +745,7 @@
     91.49,
     91.85,
     93.74,
-    94.39
+    94.18
    ]
   },
   "GC=F": {
@@ -931,7 +931,7 @@
     4157.0,
     4216.2998,
     4190.6001,
-    4176.3999
+    4174.8999
    ]
   },
   "^VIX": {
@@ -1117,11 +1117,17 @@
     15.41,
     14.84,
     15.21,
-    15.49
+    15.53
    ]
   }
  },
  "events": [
+  {
+   "date": "2026-10-13",
+   "title": "Minutes of the Board's discount rate meetings on August 17, September 9, and September 16, 2026",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261013a.htm",
+   "source": "monetary"
+  },
   {
    "date": "2026-10-08",
    "title": "Waller, The Signaling Value of the Summary of Economic Projections",
@@ -1150,12 +1156,6 @@
    "date": "2026-09-16",
    "title": "Federal Reserve issues FOMC statement",
    "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
-   "source": "monetary"
-  },
-  {
-   "date": "2026-09-16",
-   "title": "Federal Reserve Board and Federal Open Market Committee release economic projections from the September 15-16 FOMC meeting",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916b.htm",
    "source": "monetary"
   }
  ],
