@@ -63,8 +63,8 @@
   },
   "NVDA": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.0267980659263323,
+      "status": "clear",
+      "last_value": 2.979746175527303,
       "triggered_at": "2026-10-13T16:10:49.894652+00:00"
     },
     "ma_deviation_pos_200": {
