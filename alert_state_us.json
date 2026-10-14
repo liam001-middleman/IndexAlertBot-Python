@@ -267,8 +267,8 @@
       "at": "2026-10-14T19:55:41.410145+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.121705192950277,
+      "status": "clear",
+      "last_value": -4.6653149509539595,
       "triggered_at": "2026-10-14T19:55:36.929295+00:00"
     },
     "ma_deviation_neg_20": {
