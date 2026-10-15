@@ -6,8 +6,8 @@
       "triggered_at": "2026-09-23T02:20:45.062775+00:00"
     },
     "__last_report__": {
-      "price": 79244.51554010622,
-      "at": "2026-10-14T12:35:41.998172+00:00"
+      "price": 75560.74766310118,
+      "at": "2026-10-15T02:35:59.239258+00:00"
     },
     "rsi_oversold": {
       "status": "clear",
@@ -35,9 +35,9 @@
       "triggered_at": "2026-09-21T23:55:43.964737+00:00"
     },
     "intraday_drop": {
-      "status": "clear",
-      "last_value": -4.983328223210179,
-      "triggered_at": "2026-10-08T15:55:39.010956+00:00"
+      "status": "active",
+      "last_value": -5.21405944625646,
+      "triggered_at": "2026-10-15T02:35:58.099642+00:00"
     },
     "ma_deviation_neg_20": {
       "status": "active",
@@ -63,6 +63,11 @@
       "status": "active",
       "last_value": -0.8789425504244571,
       "triggered_at": "2026-10-14T12:30:51.561249+00:00"
+    },
+    "ma_deviation_neg_60": {
+      "status": "active",
+      "last_value": -5.553388350257556,
+      "triggered_at": "2026-10-15T02:35:58.099642+00:00"
     }
   },
   "btctwd": {
