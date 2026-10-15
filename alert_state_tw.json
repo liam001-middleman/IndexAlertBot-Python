@@ -57,13 +57,13 @@
       "at": "2026-10-14T02:10:42.029605+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 5.263157894736842,
+      "status": "clear",
+      "last_value": 0.6557097845525033,
       "triggered_at": "2026-10-14T02:10:37.116844+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.4038901108379775,
+      "status": "clear",
+      "last_value": 2.021146515140624,
       "triggered_at": "2026-10-14T02:01:00.513434+00:00"
     }
   },
