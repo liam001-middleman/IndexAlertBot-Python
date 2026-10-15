@@ -150,8 +150,8 @@
       "at": "2026-10-14T02:15:48.934244+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 70.25436510264879,
+      "status": "clear",
+      "last_value": 69.44703580119187,
       "triggered_at": "2026-10-14T02:15:42.426182+00:00"
     }
   },
@@ -192,13 +192,13 @@
       "at": "2026-10-14T02:15:48.934244+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 70.46835985134521,
+      "status": "clear",
+      "last_value": 62.997973122061246,
       "triggered_at": "2026-10-14T02:15:42.426182+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.055090689749895,
+      "status": "clear",
+      "last_value": 4.936978920143121,
       "triggered_at": "2026-10-13T04:25:37.273945+00:00"
     }
   }
