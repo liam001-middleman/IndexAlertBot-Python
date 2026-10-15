@@ -69,9 +69,9 @@
   },
   "6789.TW": {
     "ma_deviation_pos_200": {
-      "status": "clear",
-      "last_value": 4.0430866734835815,
-      "triggered_at": "2026-08-28T13:37:43.498894+00:00"
+      "status": "active",
+      "last_value": 5.105192510618085,
+      "triggered_at": "2026-10-15T05:00:59.578925+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
@@ -79,8 +79,8 @@
       "triggered_at": "2026-09-30T02:15:46.324000+00:00"
     },
     "__last_report__": {
-      "price": 438.5,
-      "at": "2026-10-15T04:49:59.195243+00:00"
+      "price": 443.0,
+      "at": "2026-10-15T05:01:02.604168+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "clear",
