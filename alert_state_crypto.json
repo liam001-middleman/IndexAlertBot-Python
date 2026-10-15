@@ -35,8 +35,8 @@
       "triggered_at": "2026-09-21T23:55:43.964737+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.21405944625646,
+      "status": "clear",
+      "last_value": -4.616446144395296,
       "triggered_at": "2026-10-15T02:35:58.099642+00:00"
     },
     "ma_deviation_neg_20": {
@@ -65,8 +65,8 @@
       "triggered_at": "2026-10-14T12:30:51.561249+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "active",
-      "last_value": -5.553388350257556,
+      "status": "clear",
+      "last_value": -4.967346051122347,
       "triggered_at": "2026-10-15T02:35:58.099642+00:00"
     }
   },
