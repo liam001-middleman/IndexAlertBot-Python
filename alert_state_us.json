@@ -37,8 +37,8 @@
       "triggered_at": "2026-09-04T18:40:40.113976+00:00"
     },
     "__last_report__": {
-      "price": 378.2250061035156,
-      "at": "2026-10-12T19:40:50.219749+00:00"
+      "price": 358.1610107421875,
+      "at": "2026-10-15T13:31:03.502096+00:00"
     },
     "intraday_surge": {
       "status": "clear",
@@ -46,8 +46,8 @@
       "triggered_at": "2026-09-03T14:10:46.623605+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.229274385930219,
+      "status": "clear",
+      "last_value": 1.9802210566387801,
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "intraday_drop": {
@@ -56,9 +56,9 @@
       "triggered_at": "2026-09-04T14:05:34.973963+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "clear",
-      "last_value": 1.828914223092378,
-      "triggered_at": "2026-10-01T22:53:19.167212+00:00"
+      "status": "active",
+      "last_value": -3.3556765341860793,
+      "triggered_at": "2026-10-15T13:30:56.547908+00:00"
     }
   },
   "NVDA": {
@@ -104,8 +104,8 @@
       "triggered_at": "2026-10-13T13:40:43.497430+00:00"
     },
     "__last_report__": {
-      "price": 183.32000732421875,
-      "at": "2026-10-14T14:55:40.757167+00:00"
+      "price": 171.72000122070312,
+      "at": "2026-10-15T13:31:03.502096+00:00"
     },
     "intraday_surge": {
       "status": "clear",
@@ -118,9 +118,9 @@
       "triggered_at": "2026-10-13T15:35:32.485893+00:00"
     },
     "ma_deviation_neg_200": {
-      "status": "clear",
-      "last_value": -2.9986485493326245,
-      "triggered_at": "2026-09-17T14:25:41.068519+00:00"
+      "status": "active",
+      "last_value": -4.869748033831795,
+      "triggered_at": "2026-10-15T13:30:56.547908+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
@@ -195,8 +195,8 @@
       "at": "2026-10-14T13:35:50.413134+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.377092955543325,
+      "status": "clear",
+      "last_value": -1.1604744191754643,
       "triggered_at": "2026-10-14T13:35:45.548103+00:00"
     },
     "ma_deviation_pos_60": {
@@ -222,8 +222,8 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "__last_report__": {
-      "price": 158.4199981689453,
-      "at": "2026-10-02T18:07:01.502444+00:00"
+      "price": 145.0988006591797,
+      "at": "2026-10-15T13:31:03.502096+00:00"
     },
     "intraday_surge": {
       "status": "clear",
@@ -231,14 +231,19 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.053594792555201,
+      "status": "clear",
+      "last_value": 2.2171803312057157,
       "triggered_at": "2026-09-09T17:31:00.692068+00:00"
     },
     "intraday_drop": {
       "status": "clear",
       "last_value": -4.987944691737068,
       "triggered_at": "2026-09-09T17:20:42.337902+00:00"
+    },
+    "ma_deviation_neg_20": {
+      "status": "active",
+      "last_value": -6.626390070620819,
+      "triggered_at": "2026-10-15T13:30:56.547908+00:00"
     }
   },
   "NOK": {
