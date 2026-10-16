@@ -162,9 +162,9 @@
       "triggered_at": "2026-09-17T01:25:33.590257+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 4.951412474677959,
-      "triggered_at": "2026-10-16T01:01:02.096758+00:00"
+      "status": "active",
+      "last_value": 5.071059753522633,
+      "triggered_at": "2026-10-16T01:40:39.607188+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
@@ -172,8 +172,8 @@
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "__last_report__": {
-      "price": 34.52000045776367,
-      "at": "2026-10-16T01:01:08.282168+00:00"
+      "price": 34.5099983215332,
+      "at": "2026-10-16T01:40:44.083403+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
