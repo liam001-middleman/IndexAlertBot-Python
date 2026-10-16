@@ -1,17 +1,17 @@
 {
  "version": 1,
- "fetched_at": "2026-10-16T16:10:42.925943+00:00",
+ "fetched_at": "2026-10-16T16:25:55.428544+00:00",
  "sections": {
   "bls": {
    "ok": true,
-   "at": "2026-10-15T16:20:46.567361+00:00",
-   "attempt_at": "2026-10-15T16:20:46.567361+00:00",
+   "at": "2026-10-16T16:25:47.210584+00:00",
+   "attempt_at": "2026-10-16T16:25:47.210584+00:00",
    "error": null
   },
   "fred": {
    "ok": true,
-   "at": "2026-10-15T16:20:49.004727+00:00",
-   "attempt_at": "2026-10-15T16:20:49.004727+00:00",
+   "at": "2026-10-16T16:25:55.428293+00:00",
+   "attempt_at": "2026-10-16T16:25:55.428293+00:00",
    "error": null
   },
   "prices": {
@@ -143,16 +143,16 @@
    "key": "inflation_expect_10y",
    "label": "10 年期通膨預期",
    "unit": "%",
-   "period": "2026-10-14",
-   "value": 2.35,
-   "prev_value": 2.33,
-   "yoy": 0.42735042735043727,
-   "prev_yoy": 0.0,
-   "mom": 0.858369098712447,
-   "prev_mom": 0.0,
-   "change": 0.020000000000000018,
-   "prev_change": 0.0,
-   "change_3m": 0.0
+   "period": "2026-10-15",
+   "value": 2.32,
+   "prev_value": 2.35,
+   "yoy": -0.8547008547008554,
+   "prev_yoy": 0.42735042735043727,
+   "mom": -1.2765957446808616,
+   "prev_mom": 0.858369098712447,
+   "change": -0.03000000000000025,
+   "prev_change": 0.020000000000000018,
+   "change_3m": -0.010000000000000231
   },
   "inflation_expect_1y": {
    "key": "inflation_expect_1y",
@@ -173,12 +173,12 @@
  "rates": {
   "fed_funds_upper": 4.0,
   "fed_funds_lower": 3.75,
-  "dgs10": 5.21,
-  "dgs10_20d_ago": 4.97,
-  "dgs10_bp_20d": 24.0,
-  "inflation_expect_10y": 2.35,
-  "inflation_expect_10y_prev": 2.38,
-  "inflation_expect_10y_bp_20d": -3.0,
+  "dgs10": 5.19,
+  "dgs10_20d_ago": 5.0,
+  "dgs10_bp_20d": 19.0,
+  "inflation_expect_10y": 2.32,
+  "inflation_expect_10y_prev": 2.33,
+  "inflation_expect_10y_bp_20d": -1.0,
   "fed_funds_prev": 3.75,
   "fed_funds_changed_at": "2026-09-16"
  },
