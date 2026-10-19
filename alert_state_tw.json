@@ -38,8 +38,8 @@
       "triggered_at": "2026-10-19T01:20:41.877562+00:00"
     },
     "ma_deviation_pos_200": {
-      "status": "active",
-      "last_value": 5.0575419878420345,
+      "status": "clear",
+      "last_value": 4.857337506460901,
       "triggered_at": "2026-10-19T03:05:32.198699+00:00"
     },
     "intraday_drop": {
@@ -136,9 +136,9 @@
   },
   "00878.TW": {
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 4.884268317830739,
-      "triggered_at": "2026-10-19T02:25:32.699125+00:00"
+      "status": "active",
+      "last_value": 5.001705499469273,
+      "triggered_at": "2026-10-19T03:20:38.571908+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
@@ -146,8 +146,8 @@
       "triggered_at": "2026-09-02T04:55:34.827671+00:00"
     },
     "__last_report__": {
-      "price": 35.150001525878906,
-      "at": "2026-10-19T02:25:36.863992+00:00"
+      "price": 35.13999938964844,
+      "at": "2026-10-19T03:20:42.606087+00:00"
     },
     "rsi_overbought": {
       "status": "clear",
