@@ -40,8 +40,8 @@
       "triggered_at": "2026-10-15T05:10:32.604772+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "active",
-      "last_value": -5.002109345324402,
+      "status": "clear",
+      "last_value": -4.969166603187931,
       "triggered_at": "2026-10-19T11:10:46.462941+00:00"
     },
     "ma_cross_down_20": {
