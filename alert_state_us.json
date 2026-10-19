@@ -227,8 +227,8 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "__last_report__": {
-      "price": 147.375,
-      "at": "2026-10-19T17:55:43.927175+00:00"
+      "price": 147.33999633789062,
+      "at": "2026-10-19T18:30:55.613211+00:00"
     },
     "intraday_surge": {
       "status": "clear",
@@ -236,9 +236,9 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "clear",
-      "last_value": 2.903216464003059,
-      "triggered_at": "2026-10-19T17:55:40.458640+00:00"
+      "status": "active",
+      "last_value": 3.026917087351642,
+      "triggered_at": "2026-10-19T18:30:51.270690+00:00"
     },
     "intraday_drop": {
       "status": "clear",
