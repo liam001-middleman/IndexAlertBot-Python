@@ -106,8 +106,8 @@
       "triggered_at": "2026-09-22T05:40:41.619215+00:00"
     },
     "ma_cross_down_20": {
-      "status": "active",
-      "last_value": -1.203969752957249,
+      "status": "clear",
+      "last_value": -0.37830410588308433,
       "triggered_at": "2026-10-14T12:30:51.561249+00:00"
     },
     "ma_cross_up_60": {
