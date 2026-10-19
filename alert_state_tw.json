@@ -110,8 +110,8 @@
   },
   "00919.TW": {
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 70.06648825992647,
+      "status": "clear",
+      "last_value": 68.9781150492739,
       "triggered_at": "2026-10-16T01:50:34.147845+00:00"
     },
     "ma_deviation_pos_20": {
@@ -150,8 +150,8 @@
       "at": "2026-10-16T01:01:08.282168+00:00"
     },
     "rsi_overbought": {
-      "status": "active",
-      "last_value": 71.26666903779874,
+      "status": "clear",
+      "last_value": 66.59208520700169,
       "triggered_at": "2026-10-16T01:01:02.096758+00:00"
     }
   },
@@ -162,8 +162,8 @@
       "triggered_at": "2026-10-16T04:15:36.120674+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.071059753522633,
+      "status": "clear",
+      "last_value": 4.92504276692033,
       "triggered_at": "2026-10-16T01:40:39.607188+00:00"
     },
     "ma_deviation_pos_200": {
