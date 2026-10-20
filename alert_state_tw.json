@@ -33,9 +33,9 @@
       "triggered_at": "2026-10-01T06:44:43.656223+00:00"
     },
     "ma_deviation_neg_60": {
-      "status": "clear",
-      "last_value": -4.882633212396723,
-      "triggered_at": "2026-10-20T02:50:42.687305+00:00"
+      "status": "active",
+      "last_value": -5.054714479301748,
+      "triggered_at": "2026-10-20T03:15:43.481804+00:00"
     },
     "ma_deviation_pos_200": {
       "status": "active",
@@ -53,8 +53,8 @@
       "triggered_at": "2026-10-19T01:20:41.877562+00:00"
     },
     "__last_report__": {
-      "price": 542.0,
-      "at": "2026-10-20T02:50:46.859825+00:00"
+      "price": 543.0,
+      "at": "2026-10-20T03:15:47.055599+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
@@ -136,8 +136,8 @@
   },
   "00878.TW": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.031069663341483,
+      "status": "clear",
+      "last_value": 4.913633651667779,
       "triggered_at": "2026-10-20T02:55:35.634395+00:00"
     },
     "ma_deviation_pos_200": {
