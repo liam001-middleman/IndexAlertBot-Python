@@ -27,9 +27,9 @@
       "triggered_at": "2026-10-09T18:34:33.174182+00:00"
     },
     "ma_deviation_neg_200": {
-      "status": "clear",
-      "last_value": -2.923636099872597,
-      "triggered_at": "2026-10-20T15:15:47.293906+00:00"
+      "status": "active",
+      "last_value": -3.0135750594020316,
+      "triggered_at": "2026-10-20T19:05:39.873047+00:00"
     },
     "ma_deviation_neg_60": {
       "status": "clear",
@@ -37,8 +37,8 @@
       "triggered_at": "2026-09-04T18:40:40.113976+00:00"
     },
     "__last_report__": {
-      "price": 375.22540283203125,
-      "at": "2026-10-20T15:15:52.859000+00:00"
+      "price": 375.6000061035156,
+      "at": "2026-10-20T19:05:43.136390+00:00"
     },
     "intraday_surge": {
       "status": "clear",
