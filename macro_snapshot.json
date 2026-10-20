@@ -1,12 +1,12 @@
 {
  "version": 1,
- "fetched_at": "2026-10-20T16:21:17.792415+00:00",
+ "fetched_at": "2026-10-20T16:25:37.591334+00:00",
  "sections": {
   "bls": {
-   "ok": false,
-   "at": "2026-10-19T16:15:38.185961+00:00",
-   "attempt_at": "2026-10-20T16:21:13.185958+00:00",
-   "error": "BLS 失敗（HTTP N/A／ReadTimeout）"
+   "ok": true,
+   "at": "2026-10-20T16:25:37.591237+00:00",
+   "attempt_at": "2026-10-20T16:25:37.591237+00:00",
+   "error": null
   },
   "fred": {
    "ok": true,
@@ -1160,7 +1160,5 @@
   }
  ],
  "news": [],
- "errors": [
-  "BLS（CPI／就業）：BLS 失敗（HTTP N/A／ReadTimeout）"
- ]
+ "errors": []
 }
