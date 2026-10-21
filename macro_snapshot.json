@@ -1,6 +1,6 @@
 {
  "version": 1,
- "fetched_at": "2026-10-21T16:05:37.315305+00:00",
+ "fetched_at": "2026-10-21T16:25:37.336543+00:00",
  "sections": {
   "bls": {
    "ok": true,
@@ -9,10 +9,10 @@
    "error": null
   },
   "fred": {
-   "ok": true,
+   "ok": false,
    "at": "2026-10-20T16:21:17.791975+00:00",
-   "attempt_at": "2026-10-20T16:21:17.791975+00:00",
-   "error": null
+   "attempt_at": "2026-10-21T16:25:37.336316+00:00",
+   "error": "FRED PCEPI 失敗（HTTP 200／JSONDecodeError）；FRED PCEPILFE 失敗（HTTP 200／JSONDecodeError）"
   },
   "prices": {
    "ok": true,
@@ -1160,5 +1160,7 @@
   }
  ],
  "news": [],
- "errors": []
+ "errors": [
+  "FRED（PCE／政策利率／通膨預期）：FRED PCEPI 失敗（HTTP 200／JSONDecodeError）；FRED PCEPILFE 失敗（HTTP 200／JSONDecodeError）"
+ ]
 }
