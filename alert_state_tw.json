@@ -136,8 +136,8 @@
   },
   "00878.TW": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.035745300519509,
+      "status": "clear",
+      "last_value": 4.837278920442896,
       "triggered_at": "2026-10-22T05:50:41.211415+00:00"
     },
     "ma_deviation_pos_200": {
