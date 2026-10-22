@@ -120,8 +120,8 @@
       "triggered_at": "2026-09-09T01:00:52.220431+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 6.1112125382248,
+      "status": "clear",
+      "last_value": 4.729611166403066,
       "triggered_at": "2026-10-21T01:00:55.800940+00:00"
     },
     "ma_deviation_pos_200": {
@@ -136,8 +136,8 @@
   },
   "00878.TW": {
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 5.031069663341483,
+      "status": "clear",
+      "last_value": 4.062103128839886,
       "triggered_at": "2026-10-21T01:00:55.800940+00:00"
     },
     "ma_deviation_pos_200": {
