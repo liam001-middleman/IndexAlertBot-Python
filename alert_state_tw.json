@@ -38,8 +38,8 @@
       "triggered_at": "2026-10-22T01:35:38.071189+00:00"
     },
     "ma_deviation_pos_200": {
-      "status": "active",
-      "last_value": 5.067087376180159,
+      "status": "clear",
+      "last_value": 4.670437598284376,
       "triggered_at": "2026-10-22T03:20:43.916365+00:00"
     },
     "intraday_drop": {
