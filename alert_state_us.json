@@ -6,8 +6,8 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "active",
-      "last_value": 3.113003261709811,
+      "status": "clear",
+      "last_value": 2.7408275164078755,
       "triggered_at": "2026-10-23T13:50:44.119273+00:00"
     },
     "ma_deviation_pos_60": {
@@ -334,9 +334,9 @@
       "triggered_at": "2026-09-28T13:01:00.452202+00:00"
     },
     "wti_surge": {
-      "status": "clear",
-      "last_value": 5.515391791044766,
-      "triggered_at": "2026-09-28T12:08:00.286119+00:00"
+      "status": "active",
+      "last_value": 10.983659777080401,
+      "triggered_at": "2026-10-23T14:01:03.430677+00:00"
     },
     "dxy_surge": {
       "status": "clear",
