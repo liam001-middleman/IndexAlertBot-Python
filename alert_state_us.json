@@ -6,9 +6,9 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 2.981497523968893,
-      "triggered_at": "2026-10-23T13:30:50.811245+00:00"
+      "status": "active",
+      "last_value": 3.113003261709811,
+      "triggered_at": "2026-10-23T13:50:44.119273+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "active",
@@ -16,8 +16,8 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "__last_report__": {
-      "price": 350.67999267578125,
-      "at": "2026-10-23T13:30:55.234734+00:00"
+      "price": 349.54998779296875,
+      "at": "2026-10-23T13:50:48.730039+00:00"
     }
   },
   "TSLA": {
@@ -46,8 +46,8 @@
       "triggered_at": "2026-09-03T14:10:46.623605+00:00"
     },
     "ma_deviation_pos_60": {
-      "status": "active",
-      "last_value": 3.2758670133877703,
+      "status": "clear",
+      "last_value": 2.960829846170009,
       "triggered_at": "2026-10-19T14:15:45.404414+00:00"
     },
     "intraday_drop": {
