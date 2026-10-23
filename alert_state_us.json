@@ -6,9 +6,9 @@
       "triggered_at": "2026-08-28T13:38:35.105200+00:00"
     },
     "ma_deviation_pos_20": {
-      "status": "clear",
-      "last_value": 2.547490805537633,
-      "triggered_at": "2026-10-13T13:35:37.742659+00:00"
+      "status": "active",
+      "last_value": 3.42910257437619,
+      "triggered_at": "2026-10-23T13:30:50.811245+00:00"
     },
     "ma_deviation_pos_60": {
       "status": "active",
@@ -16,8 +16,8 @@
       "triggered_at": "2026-10-02T18:06:56.429604+00:00"
     },
     "__last_report__": {
-      "price": 347.1199951171875,
-      "at": "2026-10-13T13:35:43.873053+00:00"
+      "price": 350.67999267578125,
+      "at": "2026-10-23T13:30:55.234734+00:00"
     }
   },
   "TSLA": {
@@ -118,8 +118,8 @@
       "triggered_at": "2026-09-04T13:45:47.297300+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.399863760472386,
+      "status": "clear",
+      "last_value": -0.027063887185497144,
       "triggered_at": "2026-10-22T13:30:58.299922+00:00"
     },
     "ma_deviation_neg_200": {
@@ -174,8 +174,8 @@
       "triggered_at": "2026-10-19T15:20:41.515958+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.283084636571701,
+      "status": "clear",
+      "last_value": 0.7079376988030556,
       "triggered_at": "2026-10-22T16:30:54.233603+00:00"
     },
     "ma_deviation_neg_20": {
@@ -246,8 +246,8 @@
       "triggered_at": "2026-10-22T15:20:47.802611+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -5.194271560666403,
+      "status": "clear",
+      "last_value": 0.31087872071999134,
       "triggered_at": "2026-10-22T14:30:56.384670+00:00"
     },
     "ma_deviation_neg_20": {
@@ -282,8 +282,8 @@
       "at": "2026-10-22T18:01:01.277319+00:00"
     },
     "intraday_drop": {
-      "status": "active",
-      "last_value": -7.783786670581715,
+      "status": "clear",
+      "last_value": 2.7753737574247115,
       "triggered_at": "2026-10-22T13:30:58.299922+00:00"
     },
     "ma_deviation_neg_20": {
@@ -302,8 +302,8 @@
       "triggered_at": "2026-10-14T13:30:55.010522+00:00"
     },
     "rsi_oversold": {
-      "status": "active",
-      "last_value": 29.999503224011875,
+      "status": "clear",
+      "last_value": 32.50346173706666,
       "triggered_at": "2026-10-22T18:00:56.395049+00:00"
     }
   },
