@@ -258,9 +258,9 @@
   },
   "NOK": {
     "intraday_surge": {
-      "status": "clear",
-      "last_value": -3.1203318751766407,
-      "triggered_at": "2026-10-06T18:41:22.779506+00:00"
+      "status": "active",
+      "last_value": 5.098279414612703,
+      "triggered_at": "2026-10-26T15:01:02.812015+00:00"
     },
     "ma_deviation_pos_20": {
       "status": "clear",
@@ -278,8 +278,8 @@
       "triggered_at": "2026-10-06T01:32:52.030758+00:00"
     },
     "__last_report__": {
-      "price": 7.994999885559082,
-      "at": "2026-10-22T18:01:01.277319+00:00"
+      "price": 8.555000305175781,
+      "at": "2026-10-26T15:01:07.869118+00:00"
     },
     "intraday_drop": {
       "status": "clear",
