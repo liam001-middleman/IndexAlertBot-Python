@@ -40,8 +40,8 @@
       "triggered_at": "2026-10-15T05:10:32.604772+00:00"
     },
     "ma_deviation_neg_20": {
-      "status": "active",
-      "last_value": -5.140622590819561,
+      "status": "clear",
+      "last_value": -3.314346908552311,
       "triggered_at": "2026-10-26T00:15:41.904423+00:00"
     },
     "ma_cross_down_20": {
@@ -126,8 +126,8 @@
       "triggered_at": "2026-10-21T14:10:40.224077+00:00"
     },
     "ma_cross_down_60": {
-      "status": "active",
-      "last_value": -0.5556189488101987,
+      "status": "clear",
+      "last_value": 0.38264741845372,
       "triggered_at": "2026-10-25T03:25:40.248383+00:00"
     }
   }
